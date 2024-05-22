@@ -14,6 +14,9 @@ import './index.css';
 import { MantineProvider } from '@mantine/core';
 import { RecoilRoot } from 'recoil';
 import { createClient } from '@supabase/supabase-js'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 // Remove dumb warning (errors) caused by Mantine in dev
 const consoleError = console.error;
@@ -33,9 +36,11 @@ const root = createRoot(document.getElementById('root') as HTMLElement);
 root.render(
   <StrictMode>
     <MantineProvider defaultColorScheme='dark'>
-      <RecoilRoot>
-      <App/>
-      </RecoilRoot>
+      <QueryClientProvider client={queryClient}>
+        <RecoilRoot>
+          <App />
+        </RecoilRoot>
+      </QueryClientProvider>
     </MantineProvider>
   </StrictMode>
 );

@@ -9,9 +9,13 @@ export type ContentType =
 
 export interface Sect {
     id: number;
+    created_at: string;
     name: string;
+    nicknames: string;
     description: string;
-    artwork_url: string;
+    artwork: string;
+    logo: string;
+    symbol: string;
     content_source_id: number;
 };
 

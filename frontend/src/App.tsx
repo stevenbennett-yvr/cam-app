@@ -1,12 +1,15 @@
 import { Box, MantineProvider, createTheme } from '@mantine/core';
 import { Notifications } from '@mantine/notifications'
 import { ModalsProvider } from '@mantine/modals';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import tinycolor from 'tinycolor2';
 import Layout from './nav/Layout';
 import CharacterBuilderPage from './pages/character_builder/KindredBuilderPage';
 import SelectImageModal from './modals/SelectImageModal';
 import SelectContentModal from './common/select/SelectContent';
+import { useRecoilState } from 'recoil';
+import { drawerState } from '@atoms/navAtoms';
+import DrawerBase from '@drawers/DrawerBase';
 
 const modals = {
   selectContent: SelectContentModal,
@@ -40,6 +43,7 @@ function getShadesFromColor(color: string) {
 
 
 export default function App() {
+  const [_drawer, openDrawer] = useRecoilState(drawerState)
   const generateTheme = () => {
     return createTheme({
       colors: {
@@ -79,9 +83,8 @@ export default function App() {
             <CharacterBuilderPage/>
           </Layout>
           </Box>
-
+      <DrawerBase />
       </ModalsProvider>
-
     </MantineProvider>
   )
 
