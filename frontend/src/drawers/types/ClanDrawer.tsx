@@ -1,35 +1,34 @@
 import { kindredState } from "@atoms/kindredAtoms";
 import { drawerState } from "@atoms/navAtoms";
-import { fetchContent, fetchContentAll, fetchContentById, fetchSectClans } from "@content/content-store";
+import { fetchClanDisciplines, fetchContentById, fetchContent } from "@content/content-store";
 import { useQuery } from "@tanstack/react-query";
-import { Sect, Loresheet } from "@typing/content";
+import { Clan, ClanDisciplines, Loresheet } from "@typing/content";
 import { useRecoilState } from "recoil";
-import { Blockquote, Group, Box, Text, Button, Loader, Stack, useMantineTheme, Image, TypographyStylesProvider, Divider, Title, Accordion, Badge } from "@mantine/core";
+import { Blockquote, Group, Box, Text, Button, Loader, Stack, useMantineTheme, Avatar, Image, TypographyStylesProvider, Divider, Title, Accordion, Badge, Anchor } from "@mantine/core";
 import { useState } from "react";
 import { supabase } from "../../main";
+import IndentedText from "@common/IndentedText";
 import { getMetadataOpenedDict } from "@drawers/drawer-utils";
-import ClanSelectionOption from "@common/select/components/ClanSelectOption";
 
-
-export function SectDrawerTitle(props: { data: { id?: number; sect?: Sect; onSelect?: () => void } }) {
+export function ClanDrawerTitle(props: { data: { id?: number; clan?: Clan; onSelect?: () => void } }) {
     const id = props.data.id;
 
     const [_drawer, openDrawer] = useRecoilState(drawerState)
 
-    const { data: _sect } = useQuery({
-        queryKey: [`find-sect-${id}`, { id }],
+    const { data: _clan } = useQuery({
+        queryKey: [`find-clan-${id}`, { id }],
         queryFn: async ({ queryKey }) => {
             // @ts-ignore
             // eslint-disable-next-line
             const [_key, { id }] = queryKey;
-            return await fetchContentById<Sect>('sect', id);
+            return await fetchContentById<Clan>('clan', id);
         },
         enabled: !!id,
     })
-    const sect = props.data.sect ?? _sect;
+    const clan = props.data.clan ?? _clan;
 
 
-    if (!_sect) {
+    if (!_clan) {
         return (
             <Loader
                 type='bars'
@@ -43,11 +42,11 @@ export function SectDrawerTitle(props: { data: { id?: number; sect?: Sect; onSel
         );
     }
 
-    const logoUrl = supabase.storage.from('v5').getPublicUrl(_sect.logo).data.publicUrl
+    const logoUrl = supabase.storage.from('v5').getPublicUrl(_clan.logo).data.publicUrl
 
     return (
         <>
-            {sect && (
+            {clan && (
                 <Group justify="center" wrap='nowrap'>
 
                     {logoUrl && (
@@ -77,7 +76,7 @@ export function SectDrawerTitle(props: { data: { id?: number; sect?: Sect; onSel
                                 openDrawer(null);
                             }}
                         >
-                            Select Sect
+                            Select Clan
                         </Button>
                     )}
                 </Group>
@@ -86,32 +85,30 @@ export function SectDrawerTitle(props: { data: { id?: number; sect?: Sect; onSel
     )
 }
 
-export function SectDrawerContent(props: {
-    data: { id?: number; sect?: Sect; };
+export function ClanDrawerContent(props: {
+    data: { id?: number; clan?: Clan; };
     onMetadataChange?: (openedDict?: Record<string, string>) => void;
 }) {
-
-    const [_drawer, openDrawer] = useRecoilState(drawerState)
     const id = props.data.id;
 
     const { data } = useQuery({
-        queryKey: [`find-sect-details-${id}`, { id }],
+        queryKey: [`find-clan-details-${id}`, { id }],
         queryFn: async ({ queryKey }) => {
             // @ts-ignore
             // eslint-disable-next-line
             const [_key, { id }] = queryKey;
-            const sect = await fetchContentById<Sect>('sect', id);
-            const sectClans = await fetchSectClans(id);
-            const sectLoresheets = await fetchContent<Loresheet[]>('loresheet', { sect_id: id });
+            const clan = await fetchContentById<Clan>('clan', id);
+            const clanDisciplines = await fetchClanDisciplines(id);
+            const clanLoresheets = await fetchContent<Loresheet[]>('loresheet', { clan_id: id });
             return {
-                sect: props.data.sect ?? sect,
-                sectClans,
-                sectLoresheets
+                clan: props.data.clan ?? clan,
+                clanDisciplines,
+                clanLoresheets
             }
         },
     })
 
-    if (!data || !data.sect || !data.sectClans || !data.sectLoresheets) {
+    if (!data || !data.clan || !data.clanDisciplines || !data.clanLoresheets) {
         return (
             <Loader
                 type='bars'
@@ -127,67 +124,12 @@ export function SectDrawerContent(props: {
 
     return (
         <Stack>
-            <SectInitialOverview
-                sect={data.sect}
+            <ClanInitialOverview
+                clan={data.clan}
+                clanDisciplines={data.clanDisciplines}
                 mode='READ'
             />
-            <Box>
-                <Title order={3}>Clans</Title>
-                <Accordion
-                    variant="seperated"
-                    defaultValue={getMetadataOpenedDict().clans_opened}
-                    onChange={(value) => {
-                        props.onMetadataChange?.({
-                            clans_opened: value ?? "",
-                        });
-                    }}
-                >
-                    <Accordion.Item value={"clans"}>
-                        <Accordion.Control>
-                            <Group wrap='nowrap' justify='space-between' gap={0}>
-                                <Text c='gray.5' fw={700} fz='md'>
-                                    View Options
-                                </Text>
-                                <Badge mr='sm' variant='outline' color='gray.5' size='xs'>
-                                    <Text fz='sm' c='gray.5' span>
-                                        {data.sectClans.length}
-                                    </Text>
-                                </Badge>
-                            </Group>
-                        </Accordion.Control>
-                        <Accordion.Panel
-                            styles={{
-                                content: {
-                                    padding: 0,
-                                }
-                            }}
-                        >
-                            <Stack gap={0}>
-                                <Divider color="dark.6" />
-                                {data.sectClans.map((sectClan, index) => (
-                                    <ClanSelectionOption
-                                        key={index}
-                                        clan={sectClan.clan}
-                                        note={sectClan.note}
-                                        showButton={false}
-                                        onClick={() => {
-                                            props.onMetadataChange?.();
-                                            openDrawer({
-                                                type: 'clan',
-                                                data: { id: sectClan.clan.id },
-                                                extra: { addToHistory: true },
-                                            })
-                                        }}
-                                    />
-                                ))
-
-                                }
-                            </Stack>
-                        </Accordion.Panel>
-                    </Accordion.Item>
-                </Accordion>
-            </Box>
-            {data.sectLoresheets.length > 0 && (
+                        {data.clanLoresheets.length > 0 && (
                 <Box>
                     <Title order={3}>Exclusive Loresheets</Title>
                     <Accordion
@@ -207,7 +149,7 @@ export function SectDrawerContent(props: {
                                     </Text>
                                     <Badge mr='sm' variant='outline' color='gray.5' size='xs'>
                                         <Text fz='sm' c='gray.5' span>
-                                            {data.sectLoresheets.length}
+                                            {data.clanLoresheets.length}
                                         </Text>
                                     </Badge>
                                 </Group>
@@ -221,7 +163,7 @@ export function SectDrawerContent(props: {
                             >
                                 <Stack gap={0}>
                                     <Divider color="dark.6" />
-                                    {data.sectLoresheets.map((loresheet, index) => (
+                                    {data.clanLoresheets.map((loresheet, index) => (
                                         <Text>{loresheet.name}</Text>
                                     ))
 
@@ -239,8 +181,9 @@ export function SectDrawerContent(props: {
 }
 
 
-export function SectInitialOverview(props: {
-    sect: Sect;
+export function ClanInitialOverview(props: {
+    clan: Clan;
+    clanDisciplines: ClanDisciplines[];
     mode: 'READ' | 'READ/WRITE'
 }) {
     const theme = useMantineTheme();
@@ -248,7 +191,7 @@ export function SectInitialOverview(props: {
     const kindred = useRecoilState(kindredState);
     const [_drawer, openDrawer] = useRecoilState(drawerState);
 
-    const artworkUrl = supabase.storage.from('v5').getPublicUrl(props.sect.artwork).data.publicUrl
+    const artworkUrl = supabase.storage.from('v5').getPublicUrl(props.clan.artwork).data.publicUrl
 
     return (
         <>
@@ -265,7 +208,7 @@ export function SectInitialOverview(props: {
                         overflowY: descHidden ? 'hidden' : undefined,
                     }}
                 >
-                    {props.sect.artwork && (
+                    {props.clan.artwork && (
                         <Image
                             style={{
                                 float: 'right',
@@ -279,8 +222,8 @@ export function SectInitialOverview(props: {
                         />
                     )}
                 </Box>
-                {props.sect.description && (
-                    <Box>
+                {props.clan.description && (
+                    <Box py={5}>
                         <Divider
                             px='xs'
                             label={
@@ -294,11 +237,75 @@ export function SectInitialOverview(props: {
                         />
                         <Blockquote color="red">
                             <TypographyStylesProvider>
-                                <Text dangerouslySetInnerHTML={{ __html: props.sect.description }} size="sm" />
+                                <Text dangerouslySetInnerHTML={{ __html: props.clan.description }} size="sm" />
                             </TypographyStylesProvider>
                         </Blockquote>
                     </Box>
                 )}
+                <Box py={5}>
+                    <Divider
+                        px='xs'
+                        label={
+                            <Text fz='xs' c='gray.6'>
+                                <Group gap={5}>
+                                    <Box>Disciplines</Box>
+                                </Group>
+                            </Text>
+                        }
+                        labelPosition='left'
+                    />
+                    <Stack gap="sm">
+                        {props.clanDisciplines.map((clanDiscipline, index) => (
+                            <Box style={{ display: 'flex' }}>
+                                <Avatar
+                                    src={
+                                        supabase.storage.from('v5').getPublicUrl(clanDiscipline.discipline.rombo).data.publicUrl
+                                    }
+                                    style={{
+                                        marginRight: '10px'
+                                    }}
+                                />
+                                <Text size="sm"><Anchor>{clanDiscipline.discipline.name}</Anchor>  {clanDiscipline.note}</Text>
+                            </Box>
+                        ))}
+                    </Stack>
+                </Box>
+                <Box py={5}>
+                    <Divider
+                        px='xs'
+                        label={
+                            <Text fz='xs' c='gray.6'>
+                                <Group gap={5}>
+                                    <Box>Bane</Box>
+                                </Group>
+                            </Text>
+                        }
+                        labelPosition='left'
+                    />
+                    <IndentedText>
+                        <Text size="sm">
+                            {props.clan.bane}
+                        </Text>
+                    </IndentedText>
+                </Box>
+                <Box py={5}>
+                    <Divider
+                        px='xs'
+                        label={
+                            <Text fz='xs' c='gray.6'>
+                                <Group gap={5}>
+                                    <Box>Compulsion</Box>
+                                </Group>
+                            </Text>
+                        }
+                        labelPosition='left'
+                    />
+                    <IndentedText>
+                        <Text size="sm">
+                            {props.clan.compulsion}
+                        </Text>
+                    </IndentedText>
+                </Box>                
             </Box>
         </>
     )

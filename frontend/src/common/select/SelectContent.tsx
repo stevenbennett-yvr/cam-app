@@ -1,7 +1,7 @@
 import { Loader, Text, ActionIcon, Indicator, CloseButton, MultiSelect, Checkbox, Popover, Divider, Title, useMantineTheme, Box, Overlay, ScrollArea, Center, Pagination, Group, Stack, FocusTrap, TextInput, Avatar, Button, Transition } from "@mantine/core";
 import { useDebouncedState } from "@mantine/hooks";
 import { openContextModal, ContextModalProps } from "@mantine/modals";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef, useState, useEffect } from "react";
 import { ContentType } from '../../typing/content'
 import { FilterOptions, SelectedFilter } from "./filters";
 import { IconSearch, IconFilter, IconX } from "@tabler/icons-react";
@@ -12,6 +12,7 @@ import SelectionOptionsRoot from "./components/SelectionOptionsRoot";
 import { useRecoilState } from "recoil";
 import { drawerState } from "@atoms/navAtoms";
 import { DrawerType } from "@typing/index";
+import * as JsSearch from 'js-search';
 
 export function SelectContentButton<T extends Record<string, any> = Record<string, any>>(props: {
     type: ContentType;
@@ -333,7 +334,17 @@ function SelectionOptions(props: {
 
     let options = useMemo(() => (data ? [...data.values()] : []), [data]);
 
-    let filteredOptions = options;
+    const search = useRef(new JsSearch.Search('id'));
+    useEffect(() => {
+      if (!options) return;
+      search.current.addIndex('name');
+      //search.current.addIndex('description');
+      search.current.addDocuments(options);
+    }, [options]);
+    let filteredOptions = props.searchQuery
+      ? (search.current.search(props.searchQuery) as Record<string, any>[])
+      : options;
+      
     filteredOptions = filteredOptions.sort((a, b) => {
         if (a.level !== undefined && b.level !== undefined) {
             if (a.level !== b.level) {

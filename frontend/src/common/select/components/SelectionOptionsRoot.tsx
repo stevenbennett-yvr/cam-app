@@ -1,7 +1,8 @@
 import SectSelectionOption from "./SectSelectOption";
 
 import { ContentType } from "@typing/content";
-import { Sect } from "@typing/content";
+import { Sect, Clan } from "@typing/content";
+import ClanSelectionOption from "./ClanSelectOption";
 
 
 export default function SelectionOptionsRoot(props: {
@@ -37,12 +38,12 @@ export default function SelectionOptionsRoot(props: {
     if (props.type === 'clan') {
         return (
             <>
-                {props.options.map((sect, index) => (
-                    <SectSelectionOption
+                {props.options.map((clan, index) => (
+                    <ClanSelectionOption
                         key={'class-' + index}
-                        sect={sect as Sect}
+                        clan={clan as Clan}
                         onClick={props.onClick}
-                        selected={props.selectedId === sect.id}
+                        selected={props.selectedId === clan.id}
                         hasSelected={props.selectedId !== undefined}
                         showButton={props.showButton}
                         includeOptions={props.includeOptions}

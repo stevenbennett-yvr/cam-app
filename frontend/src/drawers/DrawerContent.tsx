@@ -3,6 +3,7 @@ import { useRecoilValue } from "recoil";
 import { getCachedCustomization } from "@content/customization-cache";
 import _ from 'lodash-es';
 import { SectDrawerContent } from "./types/SectDrawer";
+import { ClanDrawerContent } from "./types/ClanDrawer";
 
 
 export default function DrawerContent(props: { onMetadataChange?: (openedDict?: Record<string, string>) => void }) {
@@ -19,7 +20,8 @@ export default function DrawerContent(props: { onMetadataChange?: (openedDict?: 
 
   return (
     <>
-        {_drawer?.type === 'sect' && <SectDrawerContent data={_drawer.data} />}
+        {_drawer?.type === 'sect' && <SectDrawerContent data={_drawer.data} onMetadataChange={props.onMetadataChange}  />}
+        {_drawer?.type === 'clan' && <ClanDrawerContent data={_drawer.data} onMetadataChange={props.onMetadataChange}  />}
     </>
   )
 

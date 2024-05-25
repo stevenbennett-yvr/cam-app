@@ -6,7 +6,7 @@ import { useElementSize } from "@mantine/hooks";
 import { selectContent } from "../../common/select/SelectContent";
 import { useRecoilState } from "recoil";
 import { kindredState } from "../../atoms/kindredAtoms";
-import { Sect, SectType } from "../../typing/content";
+import { ClanType, SectType } from "../../typing/content";
 
 
 export default function KindredBuilderStepTwo(props: { pageHeight: number }) {
@@ -62,7 +62,23 @@ function CharacterStatSideBar(props: { pageHeight: number }) {
                             }
                         )
                     }}
-                    onClickClan={() => {}}
+                    onClickClan={() => {
+                        selectContent<ClanType>(
+                            'clan',
+                            (option) => {
+                                setKindred((prev) => {
+                                    if (!prev) return prev;
+                                    return {
+                                        ...prev,
+                                        details: {
+                                            ...prev.details,
+                                            sect: option,
+                                        },
+                                    }
+                                })
+                            }
+                        )
+                    }}
                     onClickPredatorType={()=>{}}
                 />
             </Box>

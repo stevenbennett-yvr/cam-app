@@ -22,13 +22,15 @@ export type ClanType =
 
 
 export interface Clan {
-    id: number,
-    name: ClanType,
-    nicknames: string,
-    description: string,
-    logo: string,
-    symbol: string,
-    bane: string,
-    compulsion: string,
-    disciplines: DisciplineType[]
-}
+    id: number;
+    name: string;
+    created_at: string;
+    nicknames: string;
+    summary: string;
+    description: string;
+    logo: string;
+    symbol: string;
+    artwork: string;
+    bane: string;
+    compulsion: string;
+  }

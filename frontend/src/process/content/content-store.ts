@@ -1,4 +1,4 @@
-import { ContentType } from "../../typing/content";
+import { ContentType, SectClans, ClanDisciplines } from "../../typing/content";
 import { hashData } from "../../utils/numbers";
 import { ContentSource } from "../../typing/content";
 import { RequestType } from "../../typing/requests";
@@ -123,6 +123,10 @@ export async function fetchContent<T=Record<string, any>>(
         'content-source': 'find-content-source',
         'predator-type': 'find-predator-type',
         'sect': 'find-sect',
+        'sect_clans': 'find-sect-clans',
+        'clan_disciplines': 'find-clan-disciplines',
+        'disciplines': 'find-discipline',
+        'loresheet': 'find-loresheet',
     };
 
     const storedIds = getStoredIds(type, data);
@@ -179,3 +183,23 @@ export async function fetchContentSources(options?: {
     return sources.sort((a, b) => a.name.localeCompare(b.name));
   }
 
+export async function fetchSectClans(sect_id: number) {
+  const sectClans = await makeRequest<SectClans[]>('find-sect-clans', {
+    sect_id
+  });
+  if (!sectClans) {
+    return [];
+  }
+
+  return sectClans?.sort((a,b) => a.clan.name.localeCompare(b.clan.name))
+}
+
+export async function fetchClanDisciplines(clan_id: number) {
+  const clanDisciplines = await makeRequest<ClanDisciplines[]>('find-clan-disciplines', {
+    clan_id
+  });
+  if (!clanDisciplines) {
+    return [];
+  }
+  return clanDisciplines
+}
