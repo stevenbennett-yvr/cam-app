@@ -15,7 +15,7 @@ import { ContextModalProps } from '@mantine/modals';
 import { showNotification } from '@mantine/notifications';
 import { IconBrush, IconUpload } from '@tabler/icons-react';
 import { ImageOption } from '../typing/index';
-//import { uploadImage } from '@upload/image-upload';
+import { uploadImage } from '../process/upload/image-upload';
 import { isValidImage } from '../utils/images';
 import { useState } from 'react';
 
@@ -61,9 +61,12 @@ export default function SelectImageModal({
         <SimpleGrid cols={3} pl={5} py={5} pr={15}>
           <FileButton
             onChange={async (file) => {
-
               // Upload file to server
               let path = '';
+              if (file) {
+                setLoading(true);
+                path = await uploadImage(file, innerProps.category);
+              }
 
               const valid = await isValidImage(path);
               if (!valid) {

@@ -4,6 +4,10 @@ import { getCachedCustomization } from "@content/customization-cache";
 import _ from 'lodash-es';
 import { SectDrawerContent } from "./types/SectDrawer";
 import { ClanDrawerContent } from "./types/ClanDrawer";
+import { LoresheetDrawerContent } from "./types/LoresheetDrawer";
+import { LoresheetBenefitDrawerContent } from "./types/LoresheetBenefitDrawer";
+import { DisciplineDrawerContent } from "./types/DisciplineDrawer";
+import { PowerDrawerContent } from "./types/PowerDrawer";
 
 
 export default function DrawerContent(props: { onMetadataChange?: (openedDict?: Record<string, string>) => void }) {
@@ -22,7 +26,10 @@ export default function DrawerContent(props: { onMetadataChange?: (openedDict?: 
     <>
         {_drawer?.type === 'sect' && <SectDrawerContent data={_drawer.data} onMetadataChange={props.onMetadataChange}  />}
         {_drawer?.type === 'clan' && <ClanDrawerContent data={_drawer.data} onMetadataChange={props.onMetadataChange}  />}
+        {_drawer?.type === 'loresheet' && <LoresheetDrawerContent data={_drawer.data} onMetadataChange={props.onMetadataChange}  /> }
+        {_drawer?.type === 'loresheet_benefit' && <LoresheetBenefitDrawerContent data={_drawer.data} onMetadataChange={props.onMetadataChange}  /> }
+        {_drawer?.type === 'discipline' && <DisciplineDrawerContent data={_drawer.data} onMetadataChange={props.onMetadataChange} />}
+        {_drawer?.type === 'power' && <PowerDrawerContent data={_drawer.data} onMetadataChange={props.onMetadataChange} />}
     </>
   )
-
 }

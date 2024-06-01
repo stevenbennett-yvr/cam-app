@@ -18,6 +18,26 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient();
 
+export const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_KEY
+);
+
+(async () => {
+  const keys = await caches.keys();
+  for (const key of keys) {
+    caches.delete(key);
+  }
+
+  // Unregister our service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.ready.then(async (registration) => {
+      const result = await registration.unregister();
+    });
+  }
+})();
+
+
 // Remove dumb warning (errors) caused by Mantine in dev
 const consoleError = console.error;
 console.error = function (message, ...args) {
@@ -26,11 +46,6 @@ console.error = function (message, ...args) {
   }
   consoleError(message, ...args);
 };
-
-export const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_KEY
-)
 
 const root = createRoot(document.getElementById('root') as HTMLElement);
 root.render(

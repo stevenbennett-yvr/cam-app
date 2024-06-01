@@ -7,8 +7,10 @@ export type ContentType =
   | "clan_disciplines"
   | "predator-type"
   | "content-source"
-  | "disciplines"
-  | "loresheet";
+  | "discipline"
+  | "power"
+  | "loresheet"
+  | "loresheet_benefit";
 
 export interface Sect {
   id: number;
@@ -40,7 +42,13 @@ export interface Clan {
   bane: string;
   compulsion: string;
   quote: Quote;
+  characteristics: Characteristic[];
 };
+
+interface Characteristic {
+  label: string;
+  text: string;
+}
 
 export interface Discipline {
   id: number;
@@ -51,9 +59,40 @@ export interface Discipline {
   resonance: string;
   quote: JSON;
   description: string;
-  characteristics: JSON;
+  characteristics: Characteristic[];
   rombo: string;
+  artwork: string;
+  prerequisite_id: number;
 };
+
+export interface ChallengePool {
+  offense: string[];
+  defense?: string[];
+  note?: string;
+}
+
+export interface Amalgam {
+  discipline: number;
+  level: number;
+}
+
+export interface Power {
+  id: number;
+  created_at: string;
+  name: string;
+  level: number;
+  discipline_id: number;
+  content_source_id: number;
+  cost: string;
+  summary: string;
+  duration: string;
+  challenge_pool?: ChallengePool;
+  amalgam?: Amalgam;
+  description: string;
+  prerequisite_id?: number;
+  process?: string;
+  ingredients?: Characteristic[];
+}
 
 export interface Loresheet {
   id: number;
@@ -66,6 +105,14 @@ export interface Loresheet {
   content_source_id: number;
 };
 
+export interface LoresheetBenefit {
+  id: number;
+  loresheet_id: number;
+  created_at: string;
+  name: string;
+  description: string;
+  level: number;
+}
 
 interface Trait {
   creationPoints: number;

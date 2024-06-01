@@ -9,6 +9,7 @@ import { useState } from "react";
 import { supabase } from "../../main";
 import IndentedText from "@common/IndentedText";
 import { getMetadataOpenedDict } from "@drawers/drawer-utils";
+import { LoresheetSelectOption } from "@common/select/components/LoresheetSelectOption";
 
 export function ClanDrawerTitle(props: { data: { id?: number; clan?: Clan; onSelect?: () => void } }) {
     const id = props.data.id;
@@ -90,6 +91,7 @@ export function ClanDrawerContent(props: {
     onMetadataChange?: (openedDict?: Record<string, string>) => void;
 }) {
     const id = props.data.id;
+    const [_drawer, openDrawer] = useRecoilState(drawerState)
 
     const { data } = useQuery({
         queryKey: [`find-clan-details-${id}`, { id }],
@@ -129,7 +131,7 @@ export function ClanDrawerContent(props: {
                 clanDisciplines={data.clanDisciplines}
                 mode='READ'
             />
-                        {data.clanLoresheets.length > 0 && (
+            {data.clanLoresheets.length > 0 && (
                 <Box>
                     <Title order={3}>Exclusive Loresheets</Title>
                     <Accordion
@@ -164,9 +166,20 @@ export function ClanDrawerContent(props: {
                                 <Stack gap={0}>
                                     <Divider color="dark.6" />
                                     {data.clanLoresheets.map((loresheet, index) => (
-                                        <Text>{loresheet.name}</Text>
+                                        <LoresheetSelectOption
+                                            key={index}
+                                            loresheet={loresheet}
+                                            showButton={false}
+                                            onClick={() => {
+                                                props.onMetadataChange?.();
+                                                openDrawer({
+                                                    type: 'loresheet',
+                                                    data: { id: loresheet.id },
+                                                    extra: { addToHistory: true }
+                                                })
+                                            }}
+                                        />
                                     ))
-
                                     }
                                 </Stack>
                             </Accordion.Panel>
@@ -256,7 +269,7 @@ export function ClanInitialOverview(props: {
                     />
                     <Stack gap="sm">
                         {props.clanDisciplines.map((clanDiscipline, index) => (
-                            <Box style={{ display: 'flex' }}>
+                            <Box style={{ display: 'flex' }} key={index}>
                                 <Avatar
                                     src={
                                         supabase.storage.from('v5').getPublicUrl(clanDiscipline.discipline.rombo).data.publicUrl
@@ -265,11 +278,47 @@ export function ClanInitialOverview(props: {
                                         marginRight: '10px'
                                     }}
                                 />
-                                <Text size="sm"><Anchor>{clanDiscipline.discipline.name}</Anchor>  {clanDiscipline.note}</Text>
+                                <Text size="sm">
+                                    <Anchor
+                                        fz='sm'
+                                        onClick={() => {
+                                            openDrawer({
+                                                type: 'discipline',
+                                                data: { id: clanDiscipline.discipline_id },
+                                                extra: { addToHistory: true }
+                                            })
+                                        }}
+                                    >
+                                        {clanDiscipline.discipline.name}
+                                    </Anchor>
+                                    {clanDiscipline.note}
+                                </Text>
                             </Box>
                         ))}
                     </Stack>
                 </Box>
+                {props.clan.characteristics && (
+                <>
+                    {props.clan.characteristics.map((characteristic, index) => (
+                        <Box py={5} key={index}>
+                            <Divider
+                                px={'xs'}
+                                label={
+                                    <Text fz={'xs'} c={'gray.6'}>
+                                        <Group>
+                                            <Box>{characteristic.label}</Box>
+                                        </Group>
+                                    </Text>
+                                }
+                                labelPosition="left"
+                            />
+                            <TypographyStylesProvider>
+                                <Text dangerouslySetInnerHTML={{ __html: characteristic.text }} size="sm" />
+                            </TypographyStylesProvider>
+                        </Box>
+                    ))}
+                </>
+            )}
                 <Box py={5}>
                     <Divider
                         px='xs'
@@ -305,7 +354,7 @@ export function ClanInitialOverview(props: {
                             {props.clan.compulsion}
                         </Text>
                     </IndentedText>
-                </Box>                
+                </Box>
             </Box>
         </>
     )

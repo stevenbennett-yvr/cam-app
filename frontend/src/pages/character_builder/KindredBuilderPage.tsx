@@ -6,7 +6,7 @@ import BlurBox from "../../common/BlurBox";
 import KindredBuilderCore from "./KindredBuilderStepOne";
 import KindredBuilderStepTwo from "./KindredBuilderStepTwo";
 
-export default function CharacterBuilderPage() {
+export default function Component() {
 
     const theme = useMantineTheme();
     const [active, setActive] = useState(0);
@@ -21,6 +21,7 @@ export default function CharacterBuilderPage() {
 
     const stepIconStyle = { width: rem(18), height: rem(18) };
     const pageHeight = 550;
+    
     return (
         <Center>
             <Box maw={800} w='100%' pb='sm'>

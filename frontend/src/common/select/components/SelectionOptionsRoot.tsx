@@ -1,8 +1,9 @@
 import SectSelectionOption from "./SectSelectOption";
 
-import { ContentType } from "@typing/content";
+import { ContentType, Loresheet } from "@typing/content";
 import { Sect, Clan } from "@typing/content";
 import ClanSelectionOption from "./ClanSelectOption";
+import { LoresheetSelectOption } from "./LoresheetSelectOption";
 
 
 export default function SelectionOptionsRoot(props: {
@@ -72,6 +73,25 @@ export default function SelectionOptionsRoot(props: {
                 ))}
             </>
         );
+    }
+    if (props.type === 'loresheet') {
+        return (
+            <>
+                {props.options.map((loresheet, index) => (
+                    <LoresheetSelectOption
+                    key={'class-' + index}
+                    loresheet={loresheet as Loresheet}
+                    onClick={props.onClick}
+                    selected={props.selectedId === loresheet.id}
+                    hasSelected={props.selectedId !== undefined}
+                    showButton={props.showButton}
+                    includeOptions={props.includeOptions}
+                    onDelete={props.onDelete}
+                    onCopy={props.onCopy}
+                    />
+                ))}
+            </>
+        )
     }
 
     // Generic ability block. Probably used for variables.

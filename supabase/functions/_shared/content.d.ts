@@ -5,7 +5,9 @@ type ContentType =
   | 'clan'
   | 'discipline'
   | 'content-source'
-  | 'loresheet';
+  | 'loresheet'
+  | 'loresheet-benefit'
+  | 'power';
 
 export interface Sect {
   id: number;
@@ -43,7 +45,23 @@ export interface Discipline {
   resonance: string;
   quote: JSON;
   description: string;
-  characteristics: JSON;
+  rombo: string;
+  artwork: string;
+  prerequisite_id: number;
+}
+
+export interface Power {
+  id: number;
+  created_at: string;
+  name: string;
+  level: number;
+  discipline_id: number;
+  content_source_id: number;
+  cost: string;
+  summary: string;
+  duration: string;
+  challenge_pool: JSON;
+  amalgam: JSON;
 }
 
 export interface Loresheet {
@@ -56,6 +74,16 @@ export interface Loresheet {
   clan_id: number;
   content_source_id: number;
 }
+
+export interface LoresheetBenefit {
+  id: number;
+  loresheet_id: number;
+  created_at: string;
+  name: string;
+  description: string;
+  level: number;
+}
+
 
 // All requests follow JSend specification (https://github.com/omniti-labs/jsend) //
 type JSendResponse = JSendResponseSuccess | JSendResponseFail | JSendResponseError;
@@ -102,4 +130,27 @@ interface ContentSource {
   meta_data?: {
     counts?: Record<ContentType, number>;
   };
+}
+
+interface ContentUpdate {
+  id: number;
+  created_at: string;
+  user_id: string;
+  type: ContentType;
+  ref_id?: number;
+  action: 'UPDATE' | 'CREATE' | 'DELETE';
+  data: Record<string, any>;
+  content_source_id: number;
+  status: {
+    state: 'PENDING' | 'APPROVED' | 'REJECTED';
+    discord_user_id?: string;
+    discord_user_name?: string;
+  };
+  upvotes: {
+    discord_user_id: string;
+  }[];
+  downvotes: {
+    discord_user_id: string;
+  }[];
+  discord_msg_id?: string;
 }

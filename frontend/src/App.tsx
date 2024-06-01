@@ -1,4 +1,4 @@
-import { Box, MantineProvider, createTheme } from '@mantine/core';
+import { Anchor, BackgroundImage, Box, MantineProvider, createTheme, Text } from '@mantine/core';
 import { Notifications } from '@mantine/notifications'
 import { ModalsProvider } from '@mantine/modals';
 import { useEffect, useState } from 'react';
@@ -10,6 +10,12 @@ import SelectContentModal from './common/select/SelectContent';
 import { useRecoilState } from 'recoil';
 import { drawerState } from '@atoms/navAtoms';
 import DrawerBase from '@drawers/DrawerBase';
+import { useMediaQuery } from '@mantine/hooks';
+import { phoneQuery } from '@utils/mobile-responsive';
+import { ImageOption } from './typing';
+import { getDefaultBackgroundImage } from '@utils/background-images';
+import { IconBrush } from '@tabler/icons-react';
+import { UGLY_RED } from '@constants/data';
 
 const modals = {
   selectContent: SelectContentModal,
@@ -44,11 +50,19 @@ function getShadesFromColor(color: string) {
 
 export default function App() {
   const [_drawer, openDrawer] = useRecoilState(drawerState)
+  const isPhone = useMediaQuery(phoneQuery());
+
+  //Session stuff here
+
+
+  const [background, setBackground] = useState<ImageOption>(getDefaultBackgroundImage());
+
+
   const generateTheme = () => {
     return createTheme({
       colors: {
         // @ts-ignore
-        guide: getShadesFromColor('#359fdf'),
+        guide: getShadesFromColor(UGLY_RED),
         dark: [
           '#C1C2C5',
           '#A6A7AB',
@@ -76,6 +90,29 @@ export default function App() {
   return (
     <MantineProvider theme={theme} defaultColorScheme='dark'>
       <ModalsProvider modals={modals}>
+        <BackgroundImage
+          src={background?.url ?? ""}
+          radius={0}
+          style={{ position: 'fixed', top: 0, left: 0, zIndex: -1000 }}
+          w={'100dvw'}
+          h={'100dvh'}
+        />
+        {background?.source?.trim() && !isPhone && (
+          <Anchor href={background.source_url} target='_blank' underline='hover'>
+          <Text
+            size='xs'
+            c='dimmed'
+            style={{
+              position: 'fixed',
+              bottom: 6,
+              right: 10,
+              zIndex: 1,
+            }}
+          >
+            <IconBrush size='0.5rem' /> {background.source}
+          </Text>
+        </Anchor>
+        )}
         <Notifications position='top-right' zIndex={9400} containerWidth={350} />
           <Box>
           <Layout>

@@ -1,18 +1,18 @@
 import { serve } from 'std/server';
 import { connect, fetchData } from '../_shared/helpers.ts';
-import { Discipline } from '../_shared/content.d.ts'
+import { Power } from '../_shared/content.d.ts'
 
 serve(async (req:Request) => {
     return await connect(req, async (client, body) => {
-        let { id, content_sources, prerequisite_id} = body as {
+        let { id, discipline_id, content_sources} = body as {
             id?: number | number[];
+            discipline_id: number | number[];
             content_sources?: number[];
-            prerequisite_id?: number; 
         };
 
-        const results = await fetchData<Discipline>(client, 'discipline', [
+        const results = await fetchData<Power>(client, 'power', [
             { column: 'id', value: id },
-            { column: 'prerequisite_id', value: prerequisite_id}
+            { column: 'discipline_id', value: discipline_id },
         ]);
 
         const data = (id === undefined || Array.isArray(id)) ? results : results.length > 0 ? results[0] : null;

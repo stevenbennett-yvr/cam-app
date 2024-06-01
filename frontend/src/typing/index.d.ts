@@ -9,8 +9,7 @@ export type ImageOption = {
 
 export type DrawerType =
   | ContentType
-  | AbilityBlockType
-  | 'sect';
+  | AbilityBlockType;
 
 export type UploadResult = {
   success: boolean;

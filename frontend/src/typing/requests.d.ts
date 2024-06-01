@@ -10,7 +10,10 @@ export type RequestType =
   | "create-content-source"
   | "find-content-source"
   | "find-clan-disciplines"
-  | "find-loresheet";
+  | "find-loresheet"
+  | 'find-loresheet-benefit'
+  | 'find-power'
+  | 'upload-public-file';
 
 export type JSendResponse =
   | JSendResponseSuccess

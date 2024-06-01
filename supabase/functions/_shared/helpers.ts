@@ -11,7 +11,30 @@ export type TableName =
   | "discipline"
   | "clan"
   | "clan_disciplines"
-  | "loresheet";
+  | "loresheet"
+  | "loresheet_benefit"
+  | "power";
+
+  export function convertContentTypeToTableName(type: ContentType): TableName | null {
+    switch (type) {
+      case 'sect':
+        return 'sect';
+      case 'clan':
+        return 'clan';
+      case 'discipline':
+        return 'discipline';
+      case 'content-source':
+        return 'content_source';
+      case 'loresheet':
+        return 'loresheet';
+      case 'loresheet-benefit':
+        return 'loresheet_benefit';
+      case 'power':
+        return 'power';
+      default:
+        return null;
+    }
+  }
 
 export async function connect(
   req: Request,
@@ -80,15 +103,12 @@ function hasUUID(tableName: TableName): boolean {
       return false;
     case 'public_user':
       return false;
+    case 'power':
+        return false;
     default:
       return false;
   }
 }
-
-
-//  | "sect_clans"
-//  | "discipline"
-//  | "clan"
 
 export async function getPublicUser(
   client: SupabaseClient<any, "public", any>,

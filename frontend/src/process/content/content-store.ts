@@ -1,4 +1,4 @@
-import { ContentType, SectClans, ClanDisciplines } from "../../typing/content";
+import { ContentType, SectClans, ClanDisciplines, Power } from "../../typing/content";
 import { hashData } from "../../utils/numbers";
 import { ContentSource } from "../../typing/content";
 import { RequestType } from "../../typing/requests";
@@ -125,8 +125,10 @@ export async function fetchContent<T=Record<string, any>>(
         'sect': 'find-sect',
         'sect_clans': 'find-sect-clans',
         'clan_disciplines': 'find-clan-disciplines',
-        'disciplines': 'find-discipline',
+        'discipline': 'find-discipline',
         'loresheet': 'find-loresheet',
+        'loresheet_benefit': "find-loresheet-benefit",
+        'power' : 'find-power'
     };
 
     const storedIds = getStoredIds(type, data);

@@ -3,7 +3,7 @@ import { useMediaQuery } from "@mantine/hooks";
 import { LegacyRef, forwardRef } from "react";
 import { phoneQuery } from "../utils/mobile-responsive";
 import { Group } from "@mantine/core";
-import { IconTree } from "@tabler/icons-react";
+import { IconDroplets, IconGlass, IconLink } from "@tabler/icons-react";
 import classes from '../css/UserInfoIcons.module.css'
 import { Kindred } from "../typing/content";
 
@@ -72,7 +72,7 @@ export const CharacterInfo = forwardRef(
                                             variant={hasSect ? 'subtle' : 'filled'}
                                             color={props.color}
                                             size='compact-xs'
-                                            leftSection={<IconTree size='0.9rem' />}
+                                            leftSection={<IconLink size='0.9rem' />}
                                             onClick={props.onClickSect}
                                             fw={400}
                                         >
@@ -80,13 +80,16 @@ export const CharacterInfo = forwardRef(
                                         </Button>
                                     </Group>
                                 ) : (
+
+
                                 <Group wrap="nowrap" gap={10}>
-                                    <IconTree stroke={1.5} size='1rem' className={classes.icon}/>
+                                    <IconLink stroke={1.5} size='1rem' className={classes.icon}/>
                                     <Text fz='xs' c='gray.3'>
                                         <>Missing Sect</>
-
                                     </Text>
                                 </Group>
+
+
                             )}
                             </Box>
                             <Box>
@@ -96,7 +99,7 @@ export const CharacterInfo = forwardRef(
                                             variant={hasClan ? 'subtle' : 'filled'}
                                             color={props.color}
                                             size='compact-xs'
-                                            leftSection={<IconTree size='0.9rem' />}
+                                            leftSection={<IconDroplets size='0.9rem' />}
                                             onClick={props.onClickClan}
                                             fw={400}
                                         >
@@ -105,7 +108,7 @@ export const CharacterInfo = forwardRef(
                                     </Group>
                                 ) : (
                                 <Group wrap="nowrap" gap={10}>
-                                    <IconTree stroke={1.5} size='1rem' className={classes.icon}/>
+                                    <IconDroplets stroke={1.5} size='1rem' className={classes.icon}/>
                                     <Text fz='xs' c='gray.3'>
                                         <>Missing Clan</>
 
@@ -120,7 +123,7 @@ export const CharacterInfo = forwardRef(
 //                                            variant={hasAncestry ? 'subtle' : 'filled'}
                                             color={props.color}
                                             size='compact-xs'
-                                            leftSection={<IconTree size='0.9rem' />}
+                                            leftSection={<IconGlass size='0.9rem' />}
 //                                            onClick={props.onClickAncestry}
                                             fw={400}
                                         >
@@ -129,7 +132,7 @@ export const CharacterInfo = forwardRef(
                                     </Group>
                                 ) : (
                                 <Group wrap="nowrap" gap={10}>
-                                    <IconTree stroke={1.5} size='1rem' className={classes.icon}/>
+                                    <IconGlass stroke={1.5} size='1rem' className={classes.icon}/>
                                     <Text fz='xs' c='gray.3'>
                                         <>Missing Predator Type</>
                                     </Text>
@@ -141,7 +144,7 @@ export const CharacterInfo = forwardRef(
                     </div>
                 </Group >
             </div >
-        )
-
+        );
     }
-)
+);
+

@@ -9,7 +9,7 @@ import { useState } from "react";
 import { supabase } from "../../main";
 import { getMetadataOpenedDict } from "@drawers/drawer-utils";
 import ClanSelectionOption from "@common/select/components/ClanSelectOption";
-
+import { LoresheetSelectOption } from "@common/select/components/LoresheetSelectOption";
 
 export function SectDrawerTitle(props: { data: { id?: number; sect?: Sect; onSelect?: () => void } }) {
     const id = props.data.id;
@@ -222,9 +222,20 @@ export function SectDrawerContent(props: {
                                 <Stack gap={0}>
                                     <Divider color="dark.6" />
                                     {data.sectLoresheets.map((loresheet, index) => (
-                                        <Text>{loresheet.name}</Text>
+                                        <LoresheetSelectOption
+                                            key={index}
+                                            loresheet={loresheet}
+                                            showButton={false}
+                                            onClick={() => {
+                                                props.onMetadataChange?.();
+                                                openDrawer({
+                                                    type: 'loresheet',
+                                                    data: { id: loresheet.id },
+                                                    extra: { addToHistory: true }
+                                                })
+                                            }}
+                                        />
                                     ))
-
                                     }
                                 </Stack>
                             </Accordion.Panel>
