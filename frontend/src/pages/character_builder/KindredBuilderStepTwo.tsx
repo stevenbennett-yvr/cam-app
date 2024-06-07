@@ -11,6 +11,7 @@ import classes from '@css/FaqSimple.module.css'
 import IndentedText from "@common/IndentedText";
 import { IconId } from "@tabler/icons-react";
 import { ICON_BG_COLOR_HOVER } from "@constants/data";
+import { drawerState } from "@atoms/navAtoms";
 
 export default function KindredBuilderStepTwo(props: { pageHeight: number }) {
     const theme = useMantineTheme();
@@ -142,7 +143,7 @@ function KindredBuilderStepTwoInner(props: { pageHeight: number }) {
 function CharacterStatSideBar(props: { pageHeight: number }) {
     const { ref, height } = useElementSize();
     const [kindred, setKindred] = useRecoilState(kindredState)
-
+    const [_drawer, openDrawer] = useRecoilState(drawerState)
 
     function StatButton(props: {
         children: React.ReactNode;
@@ -277,7 +278,14 @@ function CharacterStatSideBar(props: { pageHeight: number }) {
                             </Accordion.Control>
                             <Accordion.Panel>
                                 <Stack gap={5}>
-                                    <StatButton>
+                                    <StatButton
+                                        onClick={() => {
+                                            openDrawer({
+                                                type: 'trait',
+                                                data: { variableName: 'Strength'}
+                                            })
+                                        }}
+                                    >
                                         <Box>
                                             <Text>
                                                 Attribute

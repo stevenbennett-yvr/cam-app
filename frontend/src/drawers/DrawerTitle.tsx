@@ -7,6 +7,7 @@ import { LoresheetDrawerTitle } from './types/LoresheetDrawer';
 import { LoresheetBenefitDrawerTitle } from './types/LoresheetBenefitDrawer';
 import { DisciplineDrawerTitle } from './types/DisciplineDrawer';
 import { PowerDrawerTitle } from './types/PowerDrawer';
+import { TraitDrawerTitle } from './types/TraitDrawer';
 
 const DrawerTitle = forwardRef((props: {}, ref: LegacyRef<HTMLDivElement>) => {
     const _drawer = useRecoilValue(drawerState);
@@ -18,6 +19,7 @@ const DrawerTitle = forwardRef((props: {}, ref: LegacyRef<HTMLDivElement>) => {
             {_drawer?.type === 'loresheet_benefit' && <LoresheetBenefitDrawerTitle data={_drawer.data} />}
             {_drawer?.type === 'discipline' && <DisciplineDrawerTitle data={_drawer.data} />}
             {_drawer?.type === 'power' && <PowerDrawerTitle data={_drawer.data} />}
+            {_drawer?.type === 'trait' && <TraitDrawerTitle data={_drawer.data} />}
         </div>
     )
 })
