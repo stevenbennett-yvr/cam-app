@@ -1,6 +1,5 @@
-import { ContentType, SectClans, ClanDisciplines, Power } from "../../typing/content";
+import { Loresheet, Discipline, ContentType, SectClans, ClanDisciplines, Power, ContentPackage, ContentSource, Sect, Clan, LoresheetBenefit, Background } from "../../typing/content";
 import { hashData } from "../../utils/numbers";
-import { ContentSource } from "../../typing/content";
 import { RequestType } from "../../typing/requests";
 import _ from 'lodash-es';
 import { makeRequest } from "../../request/request-manager";
@@ -128,7 +127,9 @@ export async function fetchContent<T=Record<string, any>>(
         'discipline': 'find-discipline',
         'loresheet': 'find-loresheet',
         'loresheet_benefit': "find-loresheet-benefit",
-        'power' : 'find-power'
+        'power' : 'find-power',
+        'background' : 'find-background',
+        'background_benefit' : 'find-background-benefit'
     };
 
     const storedIds = getStoredIds(type, data);
@@ -204,4 +205,33 @@ export async function fetchClanDisciplines(clan_id: number) {
     return [];
   }
   return clanDisciplines
+}
+
+export async function fetchContentPackage(
+  sources?: number[],
+  options?: {
+    fetchSources?: boolean;
+  }
+): Promise<ContentPackage> {
+  const content = await Promise.all([
+    fetchContentAll<Sect>('sect', sources),
+    fetchContentAll<Clan>('clan', sources),
+    fetchContentAll<Discipline>('discipline', sources),
+    fetchContentAll<Power>('power', sources),
+    fetchContentAll<Loresheet>('loresheet', sources),
+    fetchContentAll<LoresheetBenefit>('loresheet_benefit', sources),
+    fetchContentAll<Background>('background', sources),
+    options?.fetchSources ? fetchContentSources({ ids: sources }) : null
+  ]);
+
+  return {
+    sects: ((content[0] ?? []) as Sect[]).sort((a, b) => a.name.localeCompare(b.name)),
+    clans: ((content[1] ?? []) as Clan[]).sort((a, b) => a.name.localeCompare(b.name)),
+    disciplines: ((content[2] ?? []) as Discipline[]).sort((a, b) => a.name.localeCompare(b.name)),
+    powers: ((content[3] ?? []) as Power[]).sort((a, b) => a.name.localeCompare(b.name)),
+    loresheets: ((content[4] ?? []) as Loresheet[]).sort((a, b) => a.name.localeCompare(b.name)),
+    benefits: ((content[5] ?? []) as LoresheetBenefit[]).sort((a, b) => a.name.localeCompare(b.name)),
+    backgrounds:  ((content[6] ?? []) as Background[]).sort((a, b) => a.name.localeCompare(b.name)),
+    sources: content[7] as ContentSource[]
+  } satisfies ContentPackage
 }

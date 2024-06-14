@@ -1,9 +1,10 @@
 import SectSelectionOption from "./SectSelectOption";
 
-import { ContentType, Loresheet } from "@typing/content";
+import { Background, ContentType, Loresheet } from "@typing/content";
 import { Sect, Clan } from "@typing/content";
 import ClanSelectionOption from "./ClanSelectOption";
 import { LoresheetSelectOption } from "./LoresheetSelectOption";
+import BackgroundSelectionOption from "./BackgroundSelectOption";
 
 
 export default function SelectionOptionsRoot(props: {
@@ -83,6 +84,25 @@ export default function SelectionOptionsRoot(props: {
                     loresheet={loresheet as Loresheet}
                     onClick={props.onClick}
                     selected={props.selectedId === loresheet.id}
+                    hasSelected={props.selectedId !== undefined}
+                    showButton={props.showButton}
+                    includeOptions={props.includeOptions}
+                    onDelete={props.onDelete}
+                    onCopy={props.onCopy}
+                    />
+                ))}
+            </>
+        )
+    }
+    if (props.type === 'background') {
+        return (
+            <>
+                {props.options.map((background, index) => (
+                    <BackgroundSelectionOption
+                    key={'class-' + index}
+                    background={background as Background}
+                    onClick={props.onClick}
+                    selected={props.selectedId === background.id}
                     hasSelected={props.selectedId !== undefined}
                     showButton={props.showButton}
                     includeOptions={props.includeOptions}

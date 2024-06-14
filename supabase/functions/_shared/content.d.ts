@@ -7,7 +7,9 @@ type ContentType =
   | 'content-source'
   | 'loresheet'
   | 'loresheet-benefit'
-  | 'power';
+  | 'power'
+  | 'background'
+  | 'background-benefit';
 
 export interface Sect {
   id: number;
@@ -84,6 +86,23 @@ export interface LoresheetBenefit {
   level: number;
 }
 
+export interface Background {
+  id: number;
+  created_at: string;
+  name: string;
+  description: string;
+}
+
+export interface BackgroundBenefit {
+  id: number;
+  created_at: string;
+  name: string;
+  description: string;
+  type: string;
+  levels: number[];
+  background_id: number;
+  content_source_id: number;
+}
 
 // All requests follow JSend specification (https://github.com/omniti-labs/jsend) //
 type JSendResponse = JSendResponseSuccess | JSendResponseFail | JSendResponseError;

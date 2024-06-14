@@ -202,6 +202,7 @@ export function DisciplineDrawerContent(props: {
                                 }
                             />
                             <Anchor
+                                fz={'sm'}
                                 onClick={() => {
                                     openDrawer({
                                         type: 'discipline',

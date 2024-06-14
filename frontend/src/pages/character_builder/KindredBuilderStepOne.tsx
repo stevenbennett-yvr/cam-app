@@ -7,6 +7,8 @@ import { DateInput } from '@mantine/dates'
 import KindredBuilderCreationInner from './components/CharBuilderCreationInner'
 import { UGLY_RED } from '../../constants/data';
 import { getAllBackgroundImages } from "@utils/background-images";
+import { useRecoilState } from "recoil";
+import { kindredState } from "@atoms/kindredAtoms";
 
 export default function KindredBuilderStepOne(props: { pageHeight: number }) {
     const theme = useMantineTheme();
@@ -16,6 +18,8 @@ export default function KindredBuilderStepOne(props: { pageHeight: number }) {
     const isPhone = useMediaQuery(phoneQuery())
 
     const iconStyle = { width: rem(12), height: rem(12) };
+
+    const [kindred, setKindred] = useRecoilState(kindredState)
 
     return (
         <Stack gap={topGap}>
@@ -37,7 +41,6 @@ export default function KindredBuilderStepOne(props: { pageHeight: number }) {
                                         },
                                     });
                                 }}
-
                             >
                                 <Avatar
                                     alt='Character Portrait'
@@ -56,9 +59,15 @@ export default function KindredBuilderStepOne(props: { pageHeight: number }) {
                             <TextInput
                                 label='Name'
                                 placeholder='Fledgeling'
-                                //                                defaultValue={character?.name === 'Unknown Wanderer' ? '' : character?.name}
-                                onChange={() => {
-                                    //
+                                defaultValue={kindred?.name === 'Unknown Wanderer' ? '' : kindred?.name}
+                                onChange={(e) => {
+                                    setKindred((prev) => {
+                                        if (!prev) return prev;
+                                        return {
+                                            ...prev,
+                                            name: e.target.value,
+                                        };
+                                    });
                                 }}
                                 w={isPhone ? undefined : 220}
                             />

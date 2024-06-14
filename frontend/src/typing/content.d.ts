@@ -1,4 +1,17 @@
 import { ClanType } from "./kindredTypes/clan";
+import { Operation } from "./operations";
+import { Trait } from "./traits";
+
+type ContentPackage = {
+  sects: Sect[];
+  clans: Clan[];
+  disciplines: Discipline[];
+  powers: Power[];
+  loresheets: Loresheet[];
+  benefits: LoresheetBenefit[];
+  backgrounds: Background[];
+  sources?: ContentSource[];
+}
 
 export type ContentType =
   | "sect"
@@ -10,7 +23,9 @@ export type ContentType =
   | "discipline"
   | "power"
   | "loresheet"
-  | "loresheet_benefit";
+  | "loresheet_benefit"
+  | "background"
+  | "background_benefit";
 
 export interface Sect {
   id: number;
@@ -42,13 +57,8 @@ export interface Clan {
   bane: string;
   compulsion: string;
   quote: Quote;
-  characteristics: Characteristic[];
 };
 
-interface Characteristic {
-  label: string;
-  text: string;
-}
 
 export interface Discipline {
   id: number;
@@ -114,55 +124,22 @@ export interface LoresheetBenefit {
   level: number;
 }
 
-interface Trait {
-  creationPoints: number;
-  experiencePoints: number;
+export interface Background {
+  id: number;
+  created_at: string;
+  name: string;
+  description: string;
 }
 
-interface Attributes {
-  strength: Trait;
-  dexterity: Trait;
-  stamina: Trait;
-
-  charisma: Trait;
-  manipulation: Trait;
-  composure: Trait;
-
-  intelligence: Trait;
-  wits: Trait;
-  resolve: Trait;
-}
-
-interface Skills {
-  athletics: Trait;
-  brawl: Trait;
-  crafts: Trait;
-  drive: Trait;
-  firearms: Trait;
-  melee: Trait;
-  larceny: Trait;
-  stealth: Trait;
-  survival: Trait;
-
-  "animal ken": Trait;
-  etiquette: Trait;
-  insight: Trait;
-  intimidation: Trait;
-  leadership: Trait;
-  performance: Trait;
-  persuasion: Trait;
-  streetwise: Trait;
-  subterfuge: Trait;
-
-  academics: Trait;
-  awareness: Trait;
-  finance: Trait;
-  investigation: Trait;
-  medicine: Trait;
-  occult: Trait;
-  politics: Trait;
-  science: Trait;
-  technology: Trait;
+export interface BackgroundBenefit {
+  id: number;
+  created_at: string;
+  name: string;
+  description: string;
+  type: string;
+  levels: number[];
+  background_id: number;
+  content_source_id: number;
 }
 
 interface Condition {
@@ -173,57 +150,23 @@ interface Condition {
 }
 
 interface Entity {
-  name: string;
-  inventory?: array;
-  attributes: Attributes;
-  skills: Skills;
-  details?: {
-    image_url?: string;
-  };
-}
-
-export type SectType =
-  | "Camarilla"
-  | "Autarkis"
-  | "Camarilla"
-  | "";
-
-  export type ClanType =
-  | "Camarilla"
-  | "Autarkis"
-  | "Camarilla";
-
-interface Kindred extends Entity {
   id: number;
   created_at: string;
-  vss_id?: number;
-  user_id: string;
+  name: string;
+  operations: Operation[] | undefined;
+}
 
-  notes?: {
-    pages: {
-      name: string;
-      icon: string;
-      color: string;
-      contents: JSONContent;
-    }[];
-  };
+interface Kindred extends Entity {
+  generation?: number;
   details?: {
     image_url?: string;
-    background_image_url?: string;
-    conditions?: Condition[];
-    sect?: SectType;
-    clan?: ClanType;
-    info?: {
-      history: string;
-      goals: string;
-      description: string;
-      roleplaying_hints: string;
-      haven: string;
-      influence: string;
-      derangements: string;
-    };
-  };
+    generation?: number;
+    sectID?: number;
+    clanID?: number;
+    predator_type?: JSON;
+  }
 }
+
 
 interface ContentSource {
   id: number;

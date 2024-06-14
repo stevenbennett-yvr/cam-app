@@ -9,6 +9,8 @@ import { LoresheetBenefitDrawerContent } from "./types/LoresheetBenefitDrawer";
 import { DisciplineDrawerContent } from "./types/DisciplineDrawer";
 import { PowerDrawerContent } from "./types/PowerDrawer";
 import { TraitDrawerContent } from "./types/TraitDrawer";
+import { BackgroundDrawerContent } from "./types/BackgroundDrawer";
+import { BackgroundBenefitDrawerContent } from "./types/BackgroundBenefitDrawer";
 
 export default function DrawerContent(props: { onMetadataChange?: (openedDict?: Record<string, string>) => void }) {
     const _drawer = useRecoilValue(drawerState);
@@ -31,6 +33,8 @@ export default function DrawerContent(props: { onMetadataChange?: (openedDict?: 
         {_drawer?.type === 'discipline' && <DisciplineDrawerContent data={_drawer.data} onMetadataChange={props.onMetadataChange} />}
         {_drawer?.type === 'power' && <PowerDrawerContent data={_drawer.data} onMetadataChange={props.onMetadataChange} />}
         {_drawer?.type === 'trait' && <TraitDrawerContent data={_drawer.data} onMetadataChange={props.onMetadataChange} />}
+        {_drawer?.type === 'background' && <BackgroundDrawerContent data={_drawer.data} onMetadataChange={props.onMetadataChange} />}
+        {_drawer?.type === 'background_benefit' && <BackgroundBenefitDrawerContent data={_drawer.data} onMetadataChange={props.onMetadataChange} />}
     </>
   )
 }

@@ -13,7 +13,9 @@ export type RequestType =
   | "find-loresheet"
   | 'find-loresheet-benefit'
   | 'find-power'
-  | 'upload-public-file';
+  | 'upload-public-file'
+  | 'find-background'
+  | 'find-background-benefit';
 
 export type JSendResponse =
   | JSendResponseSuccess

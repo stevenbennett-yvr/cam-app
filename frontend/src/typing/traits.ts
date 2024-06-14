@@ -1,3 +1,11 @@
+
+export type StoreID = "CHARACTER" | string;
+export type TraitStore = {
+    traits: Record<string, Trait>;
+    bonuses: Record<string, { value?: number; type?: string; text: string; source: string; timestamp: number }[]>;
+    history: Record<string, { to: number; from: number | null; source: string; timestamp: number }[]>;
+}
+
 export type TraitType =
 | "attribute"
 | "skill"
@@ -13,8 +21,7 @@ export type Trait = TraitAttribute | TraitSkill | TraitDiscipline
 interface TraitBase {
     name: string;
     readonly type: TraitType;
-    baseValue: number
-    experience: number
+    value: number;
 }
 
 export interface TraitAttribute extends TraitBase {
@@ -24,7 +31,7 @@ export interface TraitAttribute extends TraitBase {
 
 export interface TraitSkill extends TraitBase {
     readonly category: Category;
-    type: "attribute"
+    type: "skill"
 }
 
 export interface TraitDiscipline extends TraitBase {

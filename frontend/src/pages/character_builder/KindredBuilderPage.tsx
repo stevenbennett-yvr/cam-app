@@ -5,6 +5,8 @@ import { IconArrowRight, IconArrowLeft, IconHome, IconHammer, IconUser } from "@
 import BlurBox from "../../common/BlurBox";
 import KindredBuilderCore from "./KindredBuilderStepOne";
 import KindredBuilderStepTwo from "./KindredBuilderStepTwo";
+import { useRecoilState } from "recoil";
+import { kindredState } from "@atoms/kindredAtoms";
 
 export default function Component() {
 
@@ -22,6 +24,8 @@ export default function Component() {
     const stepIconStyle = { width: rem(18), height: rem(18) };
     const pageHeight = 550;
     
+    const [kindred, setKindred] = useRecoilState(kindredState)
+
     return (
         <Center>
             <Box maw={800} w='100%' pb='sm'>

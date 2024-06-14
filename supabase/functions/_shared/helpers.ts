@@ -1,7 +1,12 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { corsHeaders } from "./cors.ts";
-import { JSendResponse, PublicUser, ContentSource, ContentType } from "./content.d.ts";
-import { uniqueId } from "./upload-utils.ts"
+import {
+  ContentSource,
+  ContentType,
+  JSendResponse,
+  PublicUser,
+} from "./content.d.ts";
+import { uniqueId } from "./upload-utils.ts";
 
 export type TableName =
   | "public_user"
@@ -13,28 +18,36 @@ export type TableName =
   | "clan_disciplines"
   | "loresheet"
   | "loresheet_benefit"
-  | "power";
+  | "power"
+  | "background"
+  | "background_benefit";
 
-  export function convertContentTypeToTableName(type: ContentType): TableName | null {
-    switch (type) {
-      case 'sect':
-        return 'sect';
-      case 'clan':
-        return 'clan';
-      case 'discipline':
-        return 'discipline';
-      case 'content-source':
-        return 'content_source';
-      case 'loresheet':
-        return 'loresheet';
-      case 'loresheet-benefit':
-        return 'loresheet_benefit';
-      case 'power':
-        return 'power';
-      default:
-        return null;
-    }
+export function convertContentTypeToTableName(
+  type: ContentType,
+): TableName | null {
+  switch (type) {
+    case "sect":
+      return "sect";
+    case "clan":
+      return "clan";
+    case "discipline":
+      return "discipline";
+    case "content-source":
+      return "content_source";
+    case "loresheet":
+      return "loresheet";
+    case "loresheet-benefit":
+      return "loresheet_benefit";
+    case "power":
+      return "power";
+    case "background":
+      return "background";
+    case "background-benefit":
+      return "background_benefit";
+    default:
+      return null;
   }
+}
 
 export async function connect(
   req: Request,
@@ -87,24 +100,24 @@ export async function connect(
 
 function hasUUID(tableName: TableName): boolean {
   switch (tableName) {
-    case 'sect':
+    case "sect":
       return false;
-    case 'sect_clans':
+    case "sect_clans":
       return false;
-    case 'clan':
+    case "clan":
       return false;
-    case 'clan_disciplines':
+    case "clan_disciplines":
       return false;
-    case 'content_source':
+    case "content_source":
       return false;
-    case 'discipline':
+    case "discipline":
       return false;
-    case 'loresheet':
+    case "loresheet":
       return false;
-    case 'public_user':
+    case "public_user":
       return false;
-    case 'power':
-        return false;
+    case "power":
+      return false;
     default:
       return false;
   }
@@ -265,7 +278,7 @@ export async function insertData<T = Record<string, any>>(
   // Trim all string values
   for (let key in data) {
     const value = data[key];
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       data[key] = value.trim();
     }
   }
@@ -333,8 +346,7 @@ export async function insertData<T = Record<string, any>>(
     if (countError) throw countError;
 
     // Update count & meta data
-    const sectionName = (type ? type : tableName) as
-      | ContentType
+    const sectionName = (type ? type : tableName) as ContentType;
     counts[sectionName] = count ?? -1;
 
     meta_data = { ...contentSource[0].meta_data, counts };
@@ -365,7 +377,7 @@ export async function updateData(
   // Trim all string values
   for (let key in data) {
     const value = data[key];
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       data[key] = value.trim();
     }
   }

@@ -5,7 +5,11 @@ import { phoneQuery } from "../utils/mobile-responsive";
 import { Group } from "@mantine/core";
 import { IconDroplets, IconGlass, IconLink } from "@tabler/icons-react";
 import classes from '../css/UserInfoIcons.module.css'
-import { Kindred } from "../typing/content";
+import { Kindred, Sect } from "../typing/content";
+import { truncate } from "lodash-es";
+import { useQuery } from "@tanstack/react-query";
+import { fetchContentById } from "@content/content-store";
+import { Clan } from "@typing/kindredTypes/clan";
 
 
 export const CharacterInfo = forwardRef(
@@ -26,9 +30,28 @@ export const CharacterInfo = forwardRef(
         const theme = useMantineTheme();
         const isPhone = useMediaQuery(phoneQuery());
 
-        const hasSect = props.kindred?.details?.sect
-        const hasClan = props.kindred?.details?.clan
+        const sectId = props.kindred?.details?.sectID
+        const hasSect = sectId !== undefined
+        const clanId = props.kindred?.details?.clanID
+        const hasClan = clanId !== undefined
 
+        const { data } = useQuery({
+            queryKey: [`find-character-info-${props?.kindred?.id}`, { sectId, clanId }],
+            queryFn: async ({ queryKey }) => {
+                // @ts-ignore
+                // eslint-disable-next-line
+                const [_key, { sectId, clanId }] = queryKey;
+                const sect = await fetchContentById<Sect>('sect', sectId);
+                const clan = await fetchContentById<Clan>('clan', clanId);
+                return {
+                    sect,
+                    clan
+                }
+            },
+            enabled: !!props.kindred?.details?.sectID,
+        })
+        const sect = data?.sect;
+        const clan = data?.clan;
 
         return (
             <div ref={ref} style={{ width: isPhone ? undefined : 240 }}>
@@ -51,15 +74,18 @@ export const CharacterInfo = forwardRef(
                             <HoverCard.Target>
                                 <Text
                                     c='gray.0'
+                                    fz={props.kindred && props.kindred.name.length >= 16 ? '0.9rem' : 'lg'}
                                     fw={500}
                                     className={classes.name}
                                 >
-                                    {'Placeholder Name'}
+                                    {truncate(props.kindred?.name, {
+                                        length: props.nameCutOff ?? 18
+                                    })}
                                 </Text>
                             </HoverCard.Target>
                             <HoverCard.Dropdown py={5} px={10}>
                                 <Text c='gray.0' size='sm'>
-                                    {'Placeholder Name'}
+                                    {props.kindred?.name}
                                 </Text>
                             </HoverCard.Dropdown>
                         </HoverCard>
@@ -76,21 +102,23 @@ export const CharacterInfo = forwardRef(
                                             onClick={props.onClickSect}
                                             fw={400}
                                         >
-                                            Select Sect
+                                            {sect?.name ?? "Select Sect"}
                                         </Button>
                                     </Group>
                                 ) : (
-
-
-                                <Group wrap="nowrap" gap={10}>
-                                    <IconLink stroke={1.5} size='1rem' className={classes.icon}/>
-                                    <Text fz='xs' c='gray.3'>
-                                        <>Missing Sect</>
-                                    </Text>
-                                </Group>
-
-
-                            )}
+                                    <Group wrap="nowrap" gap={10}>
+                                        <IconLink stroke={1.5} size='1rem' className={classes.icon} />
+                                        <Text fz='xs' c='gray.3'>
+                                            {sect?.name ? (
+                                                <>
+                                                    {sect.name}
+                                                </>
+                                            ) : (
+                                                <>Missing Sect</>
+                                            )}
+                                        </Text>
+                                    </Group>
+                                )}
                             </Box>
                             <Box>
                                 {props.onClickClan ? (
@@ -103,41 +131,46 @@ export const CharacterInfo = forwardRef(
                                             onClick={props.onClickClan}
                                             fw={400}
                                         >
-                                            Select Clan
+                                            {clan?.name ?? "Select Clan"}
                                         </Button>
                                     </Group>
                                 ) : (
-                                <Group wrap="nowrap" gap={10}>
-                                    <IconDroplets stroke={1.5} size='1rem' className={classes.icon}/>
-                                    <Text fz='xs' c='gray.3'>
-                                        <>Missing Clan</>
-
-                                    </Text>
-                                </Group>
-                            )}
+                                    <Group wrap="nowrap" gap={10}>
+                                        <IconDroplets stroke={1.5} size='1rem' className={classes.icon} />
+                                        <Text fz='xs' c='gray.3'>
+                                            {clan?.name ? (
+                                                <>
+                                                    {clan.name}
+                                                </>
+                                            ) : (
+                                                <>Missing Clan</>
+                                            )}
+                                        </Text>
+                                    </Group>
+                                )}
                             </Box>
                             <Box>
                                 {props.onClickPredatorType ? (
                                     <Group gap={0}>
                                         <Button
-//                                            variant={hasAncestry ? 'subtle' : 'filled'}
+                                            //                                            variant={hasAncestry ? 'subtle' : 'filled'}
                                             color={props.color}
                                             size='compact-xs'
                                             leftSection={<IconGlass size='0.9rem' />}
-//                                            onClick={props.onClickAncestry}
+                                            //                                            onClick={props.onClickAncestry}
                                             fw={400}
                                         >
                                             Select Predator Type
                                         </Button>
                                     </Group>
                                 ) : (
-                                <Group wrap="nowrap" gap={10}>
-                                    <IconGlass stroke={1.5} size='1rem' className={classes.icon}/>
-                                    <Text fz='xs' c='gray.3'>
-                                        <>Missing Predator Type</>
-                                    </Text>
-                                </Group>
-                            )}
+                                    <Group wrap="nowrap" gap={10}>
+                                        <IconGlass stroke={1.5} size='1rem' className={classes.icon} />
+                                        <Text fz='xs' c='gray.3'>
+                                            <>Missing Predator Type</>
+                                        </Text>
+                                    </Group>
+                                )}
                             </Box>
                         </Stack>
 
