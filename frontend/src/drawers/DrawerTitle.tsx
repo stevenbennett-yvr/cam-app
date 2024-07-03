@@ -10,6 +10,7 @@ import { PowerDrawerTitle } from './types/PowerDrawer';
 import { TraitDrawerTitle } from './types/TraitDrawer';
 import { BackgroundDrawerTitle } from './types/BackgroundDrawer';
 import { BackgroundBenefitDrawerTitle } from './types/BackgroundBenefitDrawer';
+import { MeritFlawDrawerTitle } from './types/MeritFlawDrawer';
 
 const DrawerTitle = forwardRef((props: {}, ref: LegacyRef<HTMLDivElement>) => {
     const _drawer = useRecoilValue(drawerState);
@@ -24,6 +25,7 @@ const DrawerTitle = forwardRef((props: {}, ref: LegacyRef<HTMLDivElement>) => {
             {_drawer?.type === 'trait' && <TraitDrawerTitle data={_drawer.data} />}
             {_drawer?.type === 'background' && <BackgroundDrawerTitle data={_drawer.data} />}
             {_drawer?.type === 'background_benefit' && <BackgroundBenefitDrawerTitle data={_drawer.data} />}
+            {_drawer?.type === 'merit_flaw' && <MeritFlawDrawerTitle data={_drawer.data} />}
         </div>
     )
 })

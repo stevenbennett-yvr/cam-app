@@ -2,7 +2,7 @@ import { kindredState } from "@atoms/kindredAtoms";
 import { drawerState } from "@atoms/navAtoms";
 import { fetchClanDisciplines, fetchContentById, fetchContent } from "@content/content-store";
 import { useQuery } from "@tanstack/react-query";
-import { Clan, ClanDisciplines, Loresheet } from "@typing/content";
+import { Clan, ClanDisciplines, Discipline, Loresheet } from "@typing/content";
 import { useRecoilState } from "recoil";
 import { Blockquote, Group, Box, Text, Button, Loader, Stack, useMantineTheme, Avatar, Image, TypographyStylesProvider, Divider, Title, Accordion, Badge, Anchor } from "@mantine/core";
 import { useState } from "react";
@@ -100,15 +100,31 @@ export function ClanDrawerContent(props: {
             // eslint-disable-next-line
             const [_key, { id }] = queryKey;
             const clan = await fetchContentById<Clan>('clan', id);
-            const clanDisciplines = await fetchClanDisciplines(id);
+            const clanDisciplinesRefs = await fetchContent<ClanDisciplines[]>('clan_disciplines', { clan_id: id });
             const clanLoresheets = await fetchContent<Loresheet[]>('loresheet', { clan_id: id });
+
+            let clanDisciplines = [] as ClanDisciplines[]
+
+            if (clanDisciplinesRefs) {
+                clanDisciplines = await Promise.all(
+                    clanDisciplinesRefs.map(async (ref) => {
+                        const discipline = await fetchContentById<Discipline>('discipline', ref.discipline_id);
+                        return {
+                            ...ref,
+                            discipline: discipline as Discipline
+                        }
+                    })
+                )
+            }
+
             return {
                 clan: props.data.clan ?? clan,
                 clanDisciplines,
                 clanLoresheets
-            }
+            };
         },
-    })
+    });
+
 
     if (!data || !data.clan || !data.clanDisciplines || !data.clanLoresheets) {
         return (
@@ -269,56 +285,59 @@ export function ClanInitialOverview(props: {
                     />
                     <Stack gap="sm">
                         {props.clanDisciplines.map((clanDiscipline, index) => (
-                            <Box style={{ display: 'flex' }} key={index}>
-                                <Avatar
-                                    src={
-                                        supabase.storage.from('v5').getPublicUrl(clanDiscipline.discipline.rombo).data.publicUrl
-                                    }
-                                    style={{
-                                        marginRight: '10px'
-                                    }}
-                                />
-                                <Text size="sm">
-                                    <Anchor
-                                        fz='sm'
-                                        onClick={() => {
-                                            openDrawer({
-                                                type: 'discipline',
-                                                data: { id: clanDiscipline.discipline_id },
-                                                extra: { addToHistory: true }
-                                            })
+                            clanDiscipline.discipline ? (
+                                <Box style={{ display: 'flex' }} key={index}>
+                                    <Avatar
+                                        src={
+                                            supabase.storage.from('v5').getPublicUrl(clanDiscipline.discipline.rombo).data.publicUrl
+                                        }
+                                        style={{
+                                            marginRight: '10px'
                                         }}
-                                    >
-                                        {clanDiscipline.discipline.name}
-                                    </Anchor>
-                                    {clanDiscipline.note}
-                                </Text>
-                            </Box>
+                                    />
+                                    <Text size="sm">
+                                        <Anchor
+                                            fz='sm'
+                                            onClick={() => {
+                                                openDrawer({
+                                                    type: 'discipline',
+                                                    data: { id: clanDiscipline.discipline_id },
+                                                    extra: { addToHistory: true }
+                                                })
+                                            }}
+                                        >
+                                            {clanDiscipline.discipline.name}
+                                        </Anchor>
+                                        {clanDiscipline.note}
+                                    </Text>
+                                </Box>
+                            ) : null
                         ))}
+
                     </Stack>
                 </Box>
                 {props.clan.characteristics && (
-                <>
-                    {props.clan.characteristics.map((characteristic, index) => (
-                        <Box py={5} key={index}>
-                            <Divider
-                                px={'xs'}
-                                label={
-                                    <Text fz={'xs'} c={'gray.6'}>
-                                        <Group>
-                                            <Box>{characteristic.label}</Box>
-                                        </Group>
-                                    </Text>
-                                }
-                                labelPosition="left"
-                            />
-                            <TypographyStylesProvider>
-                                <Text dangerouslySetInnerHTML={{ __html: characteristic.text }} size="sm" />
-                            </TypographyStylesProvider>
-                        </Box>
-                    ))}
-                </>
-            )}
+                    <>
+                        {props.clan.characteristics.map((characteristic, index) => (
+                            <Box py={5} key={index}>
+                                <Divider
+                                    px={'xs'}
+                                    label={
+                                        <Text fz={'xs'} c={'gray.6'}>
+                                            <Group>
+                                                <Box>{characteristic.label}</Box>
+                                            </Group>
+                                        </Text>
+                                    }
+                                    labelPosition="left"
+                                />
+                                <TypographyStylesProvider>
+                                    <Text dangerouslySetInnerHTML={{ __html: characteristic.text }} size="sm" />
+                                </TypographyStylesProvider>
+                            </Box>
+                        ))}
+                    </>
+                )}
                 <Box py={5}>
                     <Divider
                         px='xs'

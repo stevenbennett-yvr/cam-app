@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Discipline, Power } from "@typing/content";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { Stack, Anchor, Box, Group, Title, Button, useMantineTheme, Text, Loader, Blockquote, TypographyStylesProvider, Divider, Avatar } from "@mantine/core";
-import generateDots from "@utils/dots";
+import { generateDots } from "@utils/dots";
 import { kindredState } from "@atoms/kindredAtoms";
 import { useState } from "react";
 import { IconInfoCircle } from "@tabler/icons-react";

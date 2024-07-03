@@ -52,6 +52,15 @@ export interface Discipline {
   prerequisite_id: number;
 }
 
+interface ClanDisciplines {
+  id: number;
+  created_at: string;
+  discipline: Discipline;
+  clan_id: number;
+  discipline_id: number;
+  note: string;
+}
+
 export interface Power {
   id: number;
   created_at: string;

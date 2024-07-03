@@ -27,21 +27,14 @@ export default function BackgroundSelectionOption(props: {
 
         <BaseSelectionOption
             leftSection={
-                <HoverCard width={300} shadow="md" zIndex={5000}>
-                    <HoverCard.Target>
-                        <Group wrap="nowrap">
-                            <div style={{ flex: 1 }}>
-                                <Text size='sm' fw={500}>
-                                    {props.background.name}
-                                </Text>
-                            </div>
-                        </Group>
-                    </HoverCard.Target>
-                    <HoverCard.Dropdown>
+                <Group wrap="nowrap">
+                    <div style={{ flex: 1 }}>
+                        <Text size='sm' fw={500}>
+                            {props.background.name}
+                        </Text>
+                    </div>
+                </Group>
 
-
-                    </HoverCard.Dropdown>
-                </HoverCard>
             }
             rightSection={
                 props.note && (
@@ -61,6 +54,7 @@ export default function BackgroundSelectionOption(props: {
                     type: 'background',
                     data: {
                         id: props.background.id,
+                        background: props.background,
                         onSelect: props.showButton || props.showButton === undefined ? () => onSelect() : undefined,
                     },
                     extra: { addToHistory: true }

@@ -20,7 +20,9 @@ export type TableName =
   | "loresheet_benefit"
   | "power"
   | "background"
-  | "background_benefit";
+  | "background_benefit"
+  | "merit_flaw"
+  | 'clan_discipline';
 
 export function convertContentTypeToTableName(
   type: ContentType,
@@ -44,6 +46,8 @@ export function convertContentTypeToTableName(
       return "background";
     case "background-benefit":
       return "background_benefit";
+    case "merit-flaw":
+      return "merit_flaw";
     default:
       return null;
   }

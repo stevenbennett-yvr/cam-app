@@ -11,6 +11,7 @@ import { PowerDrawerContent } from "./types/PowerDrawer";
 import { TraitDrawerContent } from "./types/TraitDrawer";
 import { BackgroundDrawerContent } from "./types/BackgroundDrawer";
 import { BackgroundBenefitDrawerContent } from "./types/BackgroundBenefitDrawer";
+import { MeritFlawDrawerContent } from "./types/MeritFlawDrawer";
 
 export default function DrawerContent(props: { onMetadataChange?: (openedDict?: Record<string, string>) => void }) {
     const _drawer = useRecoilValue(drawerState);
@@ -35,6 +36,7 @@ export default function DrawerContent(props: { onMetadataChange?: (openedDict?: 
         {_drawer?.type === 'trait' && <TraitDrawerContent data={_drawer.data} onMetadataChange={props.onMetadataChange} />}
         {_drawer?.type === 'background' && <BackgroundDrawerContent data={_drawer.data} onMetadataChange={props.onMetadataChange} />}
         {_drawer?.type === 'background_benefit' && <BackgroundBenefitDrawerContent data={_drawer.data} onMetadataChange={props.onMetadataChange} />}
+        {_drawer?.type === 'merit_flaw' && <MeritFlawDrawerContent data={_drawer.data} onMetadataChange={props.onMetadataChange} />}
     </>
   )
 }

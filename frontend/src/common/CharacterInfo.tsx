@@ -93,7 +93,7 @@ export const CharacterInfo = forwardRef(
                         <Stack gap={3}>
                             <Box>
                                 {props.onClickSect ? (
-                                    <Group gap={0}>
+                                    <Group wrap="nowrap" gap={0}>
                                         <Button
                                             variant={hasSect ? 'subtle' : 'filled'}
                                             color={props.color}
@@ -122,7 +122,7 @@ export const CharacterInfo = forwardRef(
                             </Box>
                             <Box>
                                 {props.onClickClan ? (
-                                    <Group gap={0}>
+                                    <Group wrap="nowrap" gap={0}>
                                         <Button
                                             variant={hasClan ? 'subtle' : 'filled'}
                                             color={props.color}

@@ -4,7 +4,6 @@ import { phoneQuery } from '../../utils/mobile-responsive'
 import { openContextModal } from '@mantine/modals'
 import { IconKey, IconUserCircle } from "@tabler/icons-react";
 import { DateInput } from '@mantine/dates'
-import KindredBuilderCreationInner from './components/CharBuilderCreationInner'
 import { UGLY_RED } from '../../constants/data';
 import { getAllBackgroundImages } from "@utils/background-images";
 import { useRecoilState } from "recoil";

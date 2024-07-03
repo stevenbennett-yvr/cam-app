@@ -1,37 +1,34 @@
-import { serve } from 'std/server';
-import { connect } from '../_shared/helpers.ts';
-
+import { serve } from "std/server";
+import { connect, fetchData } from "../_shared/helpers.ts";
+import { ClanDisciplines } from "../_shared/content.d.ts";
 
 serve(async (req: Request) => {
   return await connect(req, async (client, body) => {
-    let { clan_id } = body as { clan_id: number };
+    let { id, discipline_id, clan_id, content_sources } = body as {
+      id?: number | number[];
+      discipline_id: number | number[];
+      clan_id: number | number[];
+      content_sources?: number[];
+    };
 
-    if (!clan_id) {
-      return {
-        status: 'error',
-        error: 'clan_id is required'
-      };
-    }
+    const results = await fetchData<ClanDisciplines>(
+      client,
+      "clan_discipline",
+      [
+        { column: "id", value: id },
+        { column: "discipline_id", value: discipline_id },
+        { column: "clan_id", value: clan_id },
+      ],
+    );
 
-    // Fetch the clan_disciplines with the joined discipline data
-    const { data: clanDisciplines, error } = await client
-      .from('clan_disciplines')
-      .select(`
-        *,
-        discipline (*)
-      `)
-      .eq('clan_id', clan_id);
-
-    if (error) {
-      return {
-        status: 'error',
-        error: error.message
-      };
-    }
-
+    const data = (id === undefined || Array.isArray(id))
+      ? results
+      : results.length > 0
+      ? results[0]
+      : null;
     return {
-      status: 'success',
-      data: clanDisciplines
+      status: "success",
+      data,
     };
   });
 });

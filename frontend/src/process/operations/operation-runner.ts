@@ -1,19 +1,19 @@
-import { StoreID } from "@typing/traits";
+import { StoreID } from "@typing/variables";
 import { ObjectWithUUID } from "./operation-utils";
 import {
   Operation,
   OperationAddBonusToValue,
   OperationAdjValue,
   OperationCreateValue,
+  OperationGiveBackground,
+  OperationRemoveBackground,
   OperationSetValue,
 } from "@typing/operations";
-import {
-  addTrait,
-  addTraitBonus,
-  adjVariable,
-  setTrait,
-} from "../traits/trait-manager";
-import { result } from "lodash-es";
+import { addVariable, addVariableBonus, adjVariable, getVariable, setVariable } from "@variables/variable-manager";
+import { fetchContentById } from "@content/content-store";
+import { Background } from "@typing/content";
+import { displayError } from "@utils/notifications";
+
 
 export type OperationOptions = {
   doOnlyValueCreation?: boolean;
@@ -42,18 +42,26 @@ export async function runOperations(
   sourceLabel?: string,
 ): Promise<OperationResult[]> {
   const runOp = async (operation: Operation): Promise<OperationResult> => {
+    
+    // Value creation
     if (options?.doOnlyValueCreation) {
       if (operation.type === "createValue") {
         return await runCreateValue(varId, operation, sourceLabel);
       }
       return null;
     }
+
+    // Normal
     if (operation.type === "adjValue") {
       return await runAdjValue(varId, operation, sourceLabel);
     } else if (operation.type === "setValue") {
       return await runSetValue(varId, operation, sourceLabel);
     } else if (operation.type === "addBonusToValue") {
       return await runAddBonusToValue(varId, operation, sourceLabel);
+    } else if (operation.type === "giveBackground") {
+      return await runGiveBackground(varId, operation, sourceLabel);
+    } else if (operation.type === "removeBackground") {
+      return await runRemoveBackground(varId, operation, sourceLabel);
     }
     return null;
   };
@@ -71,13 +79,7 @@ async function runCreateValue(
   operation: OperationCreateValue,
   sourceLabel?: string,
 ): Promise<OperationResult> {
-  addTrait(
-    varId,
-    operation.data.type,
-    operation.data.variable,
-    operation.data.value,
-    sourceLabel,
-  );
+  addVariable(varId, operation.data.type, operation.data.variable, operation.data.value, sourceLabel);
   return null;
 }
 
@@ -101,7 +103,7 @@ async function runSetValue(
   operation: OperationSetValue,
   sourceLabel?: string,
 ): Promise<OperationResult> {
-  setTrait(varId, operation.data.variable, operation.data.value, sourceLabel);
+  setVariable(varId, operation.data.variable, operation.data.value, sourceLabel);
   return null;
 }
 
@@ -110,13 +112,55 @@ async function runAddBonusToValue(
   operation: OperationAddBonusToValue,
   sourceLabel?: string,
 ): Promise<OperationResult> {
-  addTraitBonus(
+  addVariableBonus(
     varId,
     operation.data.variable,
     operation.data.value,
     operation.data.type,
     operation.data.text,
-    sourceLabel ?? "Unknown",
+    sourceLabel ?? 'Unknown'
+  );
+  return null;
+}
+
+async function runGiveBackground(
+  varId: StoreID,
+  operation: OperationGiveBackground,
+  sourceLabel?: string
+): Promise<OperationResult> {
+  if (operation.data.backgroundId === -1 ) return null;
+  const background = await fetchContentById<Background>('background', operation.data.backgroundId);
+  if (!background) {
+    displayError(`Background not found; ${operation.data.backgroundId}`, true)
+    return null
+  }
+
+  adjVariable(varId, 'BACKGROUND_IDS', `${background.id}`, sourceLabel);
+
+  return null;
+}
+
+async function runRemoveBackground(
+  varId: StoreID,
+  operation: OperationRemoveBackground,
+  sourceLabel?: string
+): Promise<OperationResult> {
+  if (operation.data.backgroundId === -1) return null;
+  const background = await fetchContentById<Background>('background', operation.data.backgroundId);
+  if (!background) {
+    displayError('Background not found', true);
+    return null
+  }
+
+  const getVariableList = (variableName: string) => {
+    return (getVariable(varId, variableName)?.value ?? []) as string[];
+  };
+
+  setVariable(
+    varId,
+    'BACKGROUND_IDS',
+    getVariableList('BACKGROUND_IDS').filter((id) => id !== `${background.id}`),
+    sourceLabel
   );
   return null;
 }

@@ -64,7 +64,6 @@ export function BackgroundDrawerContent(props: {
         },
         enabled: !!id,
     });
-    const background = props.data.background ?? data?.background
     const benefits = data?.benefits ?? []
     const advantages = benefits.filter(item => item.type === "advantage")
     const disadvantages = benefits.filter(item => item.type === "disadvantage")

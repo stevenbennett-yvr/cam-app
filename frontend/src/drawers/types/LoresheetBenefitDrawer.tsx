@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { LoresheetBenefit } from "@typing/content";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { Box, Group, Title, Button, useMantineTheme, Text, Loader, Blockquote, TypographyStylesProvider } from "@mantine/core";
-import generateDots from "@utils/dots";
+import { generateDots } from "@utils/dots";
 import { kindredState } from "@atoms/kindredAtoms";
 
 export function LoresheetBenefitDrawerTitle(props: { data: { id?: number; benefit?: LoresheetBenefit; onSelect?: () => void } }) {

@@ -1,23 +1,48 @@
+import {
+  Variable,
+  VariableType,
+  VariableValue,
+} from './variables'
+import {
+  ContentSource, ContentType
+} from './content'
+import {
+  OperationResult
+} from './../process/operations/operation-runner'
+
+
 export type Operation =
   | OperationAdjValue
   | OperationAddBonusToValue
   | OperationSetValue
-  | OperationCreateValue;
+  | OperationCreateValue
+  | OperationGiveBackground
+  | OperationRemoveBackground
+  // Background Advantage
+  | OperationGiveMeritFlaw
+  | OperatoinGivePower
+
 
 export type OperationType =
   | "adjValue"
   | "addBonusToValue"
   | "setValue"
-  | "createValue";
+  | "createValue"
+  | "giveBackground"
+  | "removeBackground"
+  // Background Advantage
+  | "giveMeritFlaw"
+  | "givePower"
+  ;
 
 interface OperationBase {
-  readonly id: string;
-  readonly type: OperationType;
+  id: string;
+  type: OperationType;
   data: Record<string, any>;
 }
 
 export interface OperationAdjValue extends OperationBase {
-  readonly type: "adjValue";
+  type: "adjValue";
   data: {
     variable: string;
     value: VariableValue;
@@ -25,7 +50,7 @@ export interface OperationAdjValue extends OperationBase {
 }
 
 export interface OperationAddBonusToValue extends OperationBase {
-  readonly type: "addBonusToValue";
+  type: "addBonusToValue";
   data: {
     variable: string;
     value?: number;
@@ -35,7 +60,7 @@ export interface OperationAddBonusToValue extends OperationBase {
 }
 
 export interface OperationSetValue extends OperationBase {
-  readonly type: "setValue";
+  type: "setValue";
   data: {
     variable: string;
     value: VariableValue;
@@ -43,10 +68,41 @@ export interface OperationSetValue extends OperationBase {
 }
 
 export interface OperationCreateValue extends OperationBase {
-  readonly type: "createValue";
+   type: "createValue";
   data: {
     variable: string;
     type: VariableType;
     value: VariableValue;
   };
+}
+
+export interface OperationGiveBackground extends OperationBase {
+  type: "giveBackground";
+  data: {
+    backgroundId: id;
+  }
+}
+
+export interface OperationRemoveBackground extends OperationBase {
+  type: "removeBackground";
+  data: {
+    backgroundId: number;
+  }
+}
+
+export interface OperationGiveMeritFlaw extends OperationBase {
+  type: "giveMeritFlaw";
+  data: {
+    meritFlawId: number;
+  }
+}
+
+export type PowerMetadata = {
+  type: "POWER" | "FORMULA" | "RITUAL" | "CEREMONY";
+  powerId: number;
+}
+
+export interface OperatoinGivePower extends OperationBase {
+  readonly type: 'givePower';
+  data: PowerMetadata;
 }

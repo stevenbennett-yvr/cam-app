@@ -7,7 +7,7 @@ import BaseSelectionOption from "./BaseSelectionOption";
 
 export default function PowerSelectionOption(props: {
     power: Power;
-    onClick: (power: Power) => void;
+    onClick?: (power: Power) => void;
     selected?: boolean;
     hasSelected?: boolean;
     showButton?: boolean;
@@ -15,16 +15,12 @@ export default function PowerSelectionOption(props: {
     onDelete?: (id: number) => void;
     onCopy?: (id: number) => void;
     note?: string;
+    noBackground?: boolean;
+    px?: number;
 }) {
     const [_drawer, openDrawer] = useRecoilState(drawerState);
-    const kindred = useRecoilState(kindredState)
-
-    const onSelect = () => {
-        props.onClick(props.power)
-    }
 
     return (
-
         <BaseSelectionOption
             leftSection={
                 <HoverCard width={300} shadow="md" zIndex={5000}>
@@ -57,24 +53,29 @@ export default function PowerSelectionOption(props: {
             }
             showButton={props.showButton}
             selected={props.selected}
-            onClick={() =>
-                openDrawer({
-                    type: 'power',
-                    data: {
-                        id: props.power.id,
-                        onSelect: props.showButton || props.showButton === undefined ? () => onSelect() : undefined,
-                    },
-                    extra: { addToHistory: true }
-                })
-            }
+            noBackground={props.noBackground}
+            onClick={
+                props.onClick
+                  ? () =>
+                      openDrawer({
+                        type: 'power',
+                        data: {
+                          id: props.power.id,
+                          onSelect:
+                            props.showButton || props.showButton === undefined ? () => props.onClick?.(props.power) : undefined,
+                        },
+                        extra: { addToHistory: true },
+                      })
+                  : () => {}
+              }
             buttonTitle="Select"
             disableButton={props.selected}
-            onButtonClick={() => onSelect()}
+            onButtonClick={props.onClick ? () => props.onClick?.(props.power) : undefined}
             includeOptions={props.includeOptions}
-            onOptionsDelete={() => props.onDelete?.(props.power.id)}
-            onOptionsCopy={() => props.onCopy?.(props.power.id)}
+            onOptionsDelete={props.onDelete ? () => props.onDelete?.(props.power.id) : undefined}
+            onOptionsCopy={props.onCopy ? () => props.onCopy?.(props.power.id) : undefined}
+            px={props.px}
         />
-
     )
 }
 

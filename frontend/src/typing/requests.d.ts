@@ -15,7 +15,8 @@ export type RequestType =
   | 'find-power'
   | 'upload-public-file'
   | 'find-background'
-  | 'find-background-benefit';
+  | 'find-background-benefit'
+  | 'find-merit-flaw';
 
 export type JSendResponse =
   | JSendResponseSuccess

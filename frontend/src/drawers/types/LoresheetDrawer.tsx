@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Loresheet, LoresheetBenefit } from "@typing/content";
 import { useRecoilState } from "recoil";
 import { supabase } from "../../main";
-import generateDots from "@utils/dots";
+import { generateDots } from "@utils/dots";
 
 export function LoresheetDrawerTitle(props: { data: { id?: number; loresheet?: Loresheet; onSelect?: () => void } }) {
     const id = props.data.id;
@@ -24,6 +24,8 @@ export function LoresheetDrawerTitle(props: { data: { id?: number; loresheet?: L
         enabled: !!id,
     })
     const loresheet = props.data.loresheet ?? _loresheet;
+    const [kindred,] = useRecoilState(kindredState);
+
 
     if (!_loresheet) {
         return (
@@ -38,6 +40,9 @@ export function LoresheetDrawerTitle(props: { data: { id?: number; loresheet?: L
             />
         )
     };
+
+    const showButton = _loresheet.clan_id === kindred?.details?.clanID || _loresheet.sect_id === kindred?.details?.sectID || (_loresheet.sect_id === null && _loresheet.clan_id === null)
+
 
     return (
         <>
@@ -55,6 +60,7 @@ export function LoresheetDrawerTitle(props: { data: { id?: number; loresheet?: L
                                 radius={"xl"}
                                 mb={5}
                                 size="compact-sm"
+                                disabled={!showButton}
                                 onClick={() => {
                                     props.data.onSelect?.();
                                     openDrawer(null);

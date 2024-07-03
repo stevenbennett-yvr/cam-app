@@ -8,7 +8,6 @@ import {
   OperationSetValue,
   OperationType,
 } from "@typing/operations";
-import { StoreID, TraitType } from "@typing/traits";
 
 export function createDefaultOperation<T = Operation>(type: OperationType): T {
   if (type === "adjValue") {

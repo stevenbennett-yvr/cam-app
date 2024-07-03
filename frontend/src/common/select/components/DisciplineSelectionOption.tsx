@@ -1,14 +1,15 @@
-import { BackgroundBenefit } from "@typing/content";
+import { Discipline } from "@typing/content";
 import { useRecoilState } from "recoil";
 import { drawerState } from "@atoms/navAtoms";
 import { kindredState } from "@atoms/kindredAtoms";
-import { Text, Group, Badge, HoverCard } from "@mantine/core";
+import { modals } from "@mantine/modals";
+import { Title, Text, Group, Avatar, Badge } from "@mantine/core";
 import BaseSelectionOption from "./BaseSelectionOption";
-import { levelsDisplay } from "@utils/dots";
+import { supabase } from "../../../main";
 
-export default function BackgroundBenefitSelectionOption(props: {
-    benefit: BackgroundBenefit;
-    onClick: (benefit: BackgroundBenefit) => void;
+export default function DisciplineSelectionOption(props: {
+    discipline: Discipline;
+    onClick: (discipline: Discipline) => void;
     selected?: boolean;
     hasSelected?: boolean;
     showButton?: boolean;
@@ -21,20 +22,31 @@ export default function BackgroundBenefitSelectionOption(props: {
     const kindred = useRecoilState(kindredState)
 
     const onSelect = () => {
-        props.onClick(props.benefit)
+            props.onClick(props.discipline)  
     }
 
-    return (
+    const url = supabase.storage.from('v5').getPublicUrl(props.discipline.rombo).data.publicUrl
 
+    return (
         <BaseSelectionOption
             leftSection={
-                        <Group wrap="nowrap">
-                            <div style={{ flex: 1 }}>
-                                <Text size='sm' fw={500}>
-                                    {props.benefit.name} {` ${levelsDisplay(props.benefit.levels)}`}
-                                </Text>
-                            </div>
-                        </Group>
+                <Group wrap="nowrap">
+                    <Avatar
+                        src={url}
+                        radius='sm'
+                        styles={{
+                            image: {
+                                objectFit: 'contain',
+                            }
+                        }}
+                    />
+                    <div style={{ flex: 1 }}>
+                        <Text size='sm' fw={500}>
+                            {props.discipline.name}
+                        </Text>
+
+                    </div>
+                </Group>
             }
             rightSection={
                 props.note && (
@@ -51,9 +63,9 @@ export default function BackgroundBenefitSelectionOption(props: {
             selected={props.selected}
             onClick={() =>
                 openDrawer({
-                    type: 'background_benefit',
+                    type: 'discipline',
                     data: {
-                        id: props.benefit.id,
+                        id: props.discipline.id,
                         onSelect: props.showButton || props.showButton === undefined ? () => onSelect() : undefined,
                     },
                     extra: { addToHistory: true }
@@ -63,11 +75,8 @@ export default function BackgroundBenefitSelectionOption(props: {
             disableButton={props.selected}
             onButtonClick={() => onSelect()}
             includeOptions={props.includeOptions}
-            onOptionsDelete={() => props.onDelete?.(props.benefit.id)}
-            onOptionsCopy={() => props.onCopy?.(props.benefit.id)}
+            onOptionsDelete={() => props.onDelete?.(props.discipline.id)}
+            onOptionsCopy={() => props.onCopy?.(props.discipline.id)}
         />
-
     )
 }
-
-

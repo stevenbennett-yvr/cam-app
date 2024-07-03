@@ -5,7 +5,7 @@ import { phoneQuery } from "@utils/mobile-responsive";
 import { useRecoilState } from "recoil";
 import BaseSelectionOption from "./BaseSelectionOption";
 import { Box, Text } from "@mantine/core";
-
+import { kindredState } from "@atoms/kindredAtoms";
 
 export function LoresheetSelectOption(props: {
     loresheet: Loresheet;
@@ -21,6 +21,9 @@ export function LoresheetSelectOption(props: {
 }) {
     const [_drawer, openDrawer] = useRecoilState(drawerState);
     const isPhone = useMediaQuery(phoneQuery());
+    const [kindred, setKindred] = useRecoilState(kindredState);
+
+    const showButton = props.loresheet.clan_id === kindred?.details?.clanID || props.loresheet.sect_id === kindred?.details?.sectID || (props.loresheet.sect_id === null && props.loresheet.clan_id === null)
 
     return (
         <BaseSelectionOption
@@ -50,7 +53,7 @@ export function LoresheetSelectOption(props: {
                     : () => { }
             }
             buttonTitle="Select"
-            disableButton={props.selected}
+            disableButton={!showButton}
             onButtonClick={props.onClick ? () => props.onClick?.(props.loresheet) : undefined}
             includeOptions={props.includeOptions}
             onOptionsDelete={() => props.onDelete?.(props.loresheet.id)}

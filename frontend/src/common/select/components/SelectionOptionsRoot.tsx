@@ -1,10 +1,13 @@
 import SectSelectionOption from "./SectSelectOption";
 
-import { Background, ContentType, Loresheet } from "@typing/content";
+import { Background, ContentType, Discipline, Loresheet, MeritFlaw, Power } from "@typing/content";
 import { Sect, Clan } from "@typing/content";
 import ClanSelectionOption from "./ClanSelectOption";
 import { LoresheetSelectOption } from "./LoresheetSelectOption";
 import BackgroundSelectionOption from "./BackgroundSelectOption";
+import MeritFlawSelectionOption from "./MeritFlawSelectOption";
+import DisciplineSelectionOption from "./DisciplineSelectionOption";
+import PowerSelectionOption from "./PowerSelectOption";
 
 
 export default function SelectionOptionsRoot(props: {
@@ -103,6 +106,63 @@ export default function SelectionOptionsRoot(props: {
                     background={background as Background}
                     onClick={props.onClick}
                     selected={props.selectedId === background.id}
+                    hasSelected={props.selectedId !== undefined}
+                    showButton={props.showButton}
+                    includeOptions={props.includeOptions}
+                    onDelete={props.onDelete}
+                    onCopy={props.onCopy}
+                    />
+                ))}
+            </>
+        )
+    }
+    if (props.type === 'merit_flaw') {
+        return (
+            <>
+                {props.options.map((meritFlaw, index) => (
+                    <MeritFlawSelectionOption
+                    key={'class-' + index}
+                    meritFlaw={meritFlaw as MeritFlaw}
+                    onClick={props.onClick}
+                    selected={props.selectedId === meritFlaw.id}
+                    hasSelected={props.selectedId !== undefined}
+                    showButton={props.showButton}
+                    includeOptions={props.includeOptions}
+                    onDelete={props.onDelete}
+                    onCopy={props.onCopy}
+                    />
+                ))}
+            </>
+        )
+    }
+    if (props.type === 'discipline') {
+        return (
+            <>
+                {props.options.map((discipline, index) => (
+                    <DisciplineSelectionOption
+                    key={'class-' + index}
+                    discipline={discipline as Discipline}
+                    onClick={props.onClick}
+                    selected={props.selectedId === discipline.id}
+                    hasSelected={props.selectedId !== undefined}
+                    showButton={props.showButton}
+                    includeOptions={props.includeOptions}
+                    onDelete={props.onDelete}
+                    onCopy={props.onCopy}
+                    />
+                ))}
+            </>
+        )
+    }
+    if (props.type === 'power') {
+        return (
+            <>
+                {props.options.map((power, index) => (
+                    <PowerSelectionOption
+                    key={'class-' + index}
+                    power={power as Power}
+                    onClick={props.onClick}
+                    selected={props.selectedId === power.id}
                     hasSelected={props.selectedId !== undefined}
                     showButton={props.showButton}
                     includeOptions={props.includeOptions}

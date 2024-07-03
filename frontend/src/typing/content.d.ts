@@ -3,15 +3,19 @@ import { Operation } from "./operations";
 import { Trait } from "./traits";
 
 type ContentPackage = {
-  sects: Sect[];
-  clans: Clan[];
-  disciplines: Discipline[];
-  powers: Power[];
-  loresheets: Loresheet[];
-  benefits: LoresheetBenefit[];
-  backgrounds: Background[];
   sources?: ContentSource[];
+  backgrounds: Background[];
+  background_benefits: BackgroundBenefit[];
+  clans: Clan[];
+  clan_disciplines: ClanDisciplines[];
+  disciplines: Discipline[];
+  loresheets: Loresheet[];
+  loresheet_benefits: LoresheetBenefit[];
+  merit_flaws: MeritFlaw[];
+  powers: Power[];
+  sects: Sect[];
 }
+
 
 export type ContentType =
   | "sect"
@@ -25,7 +29,8 @@ export type ContentType =
   | "loresheet"
   | "loresheet_benefit"
   | "background"
-  | "background_benefit";
+  | "background_benefit"
+  | "merit_flaw";
 
 export interface Sect {
   id: number;
@@ -39,10 +44,11 @@ export interface Sect {
   content_source_id: number;
 }
 
-interface Quote {
+interface characteristic {
+  label: string,
   text: string,
-  cite: string,
 }
+
 
 export interface Clan {
   id: number;
@@ -56,7 +62,7 @@ export interface Clan {
   artwork: string;
   bane: string;
   compulsion: string;
-  quote: Quote;
+  characteristics: characteristic[]  
 };
 
 
@@ -104,6 +110,12 @@ export interface Power {
   ingredients?: Characteristic[];
 }
 
+export interface PowerSlot {
+  rank: number;
+  discipline_id?: number;
+  power_id?: number;
+}
+
 export interface Loresheet {
   id: number;
   created_at: string;
@@ -142,6 +154,32 @@ export interface BackgroundBenefit {
   content_source_id: number;
 }
 
+type meritFlawCategory =
+  | "bonding"
+  | "connection"
+  | "feeding"
+  | "mythical"
+  | "physical"
+  | "psychological"
+  | "thin-blood"
+  | "ghoul";
+
+type meritFlawType =
+  | "merit"
+  | "flaw";
+
+export interface MeritFlaw {
+  id: number;
+  created_at: string;
+  content_source_id: number;
+  category: meritFlawCategory;
+  type: meritFlawType;
+  levels: number[];
+  name: string;
+  prerequisites?: string[];
+  description: string;
+}
+
 interface Condition {
   name: string;
   description: string;
@@ -153,18 +191,22 @@ interface Entity {
   id: number;
   created_at: string;
   name: string;
-  operations: Operation[] | undefined;
+  operations: Operation[];
+  powers?: {
+    slots: PowerSlot[];
+  }
 }
 
 interface Kindred extends Entity {
   generation?: number;
+  clanOperations: Operation[];
   details?: {
     image_url?: string;
     generation?: number;
     sectID?: number;
     clanID?: number;
     predator_type?: JSON;
-  }
+  };
 }
 
 
@@ -190,8 +232,8 @@ interface SectClans {
 interface ClanDisciplines {
   id: number;
   created_at: string;
-  discipline: Discipline;
   clan_id: number;
   discipline_id: number;
   note: string;
+  discipline?: Discipline;
 }
